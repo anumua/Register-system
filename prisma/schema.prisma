@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model positions {
+  pos_id       String    @id @db.Uuid
+  unit_name    String    @db.VarChar(100)
+  subunit_name String?   @db.VarChar(100)
+  pos_code     String?   @db.VarChar(12)
+  pos_name     String?   @db.VarChar(100)
+  pos_pronum   String?   @db.VarChar(5)
+  pos_mark     String?   @db.VarChar(200)
+  pos_king     String?   @db.VarChar(10)
+  nco_id       String?   @db.Uuid
+  time_select  DateTime? @db.Timestamp(6)
+  students     students? @relation(fields: [nco_id], references: [nco_id], onDelete: NoAction, onUpdate: NoAction, map: "ref_student_id")
+}
+
+model students {
+  nco_id     String      @id @db.Uuid
+  nco_class  String?     @db.VarChar(50)
+  nco_number String?     @db.VarChar(4)
+  nco_rank   String?     @db.VarChar(5)
+  first_name String?     @db.VarChar(50)
+  last_name  String?     @db.VarChar(50)
+  nco_id10   String?     @db.VarChar(10)
+  nco_id13   String?     @db.VarChar(13)
+  nco_mark   String?     @db.VarChar(200)
+  nco_king   String?     @db.VarChar(50)
+  positions  positions[]
+}
+
+model users {
+  user_id  String  @id @db.Uuid
+  username String? @unique @db.VarChar(50)
+  password String? @db.VarChar(100)
+  fullname String? @db.VarChar(100)
+  role     String? @db.VarChar(20)
+}
