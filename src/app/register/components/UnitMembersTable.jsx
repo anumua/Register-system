@@ -1,9 +1,6 @@
 'use client';
 import React from 'react';
 import {
-  Box,
-  Typography,
-  Button,
   Card,
   CardContent,
   Table,
@@ -13,307 +10,295 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Button,
   CircularProgress,
-  Chip,
   Avatar,
-  Collapse
+  Box,
+  Typography,
+  Autocomplete,
+  TextField,
+  Chip,
+  Divider
 } from '@mui/material';
-import {
-  Delete as DeleteIcon,
-  Add as AddIcon,
-  Person as PersonIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon
-} from '@mui/icons-material';
+import { Delete as DeleteIcon, Add as AddIcon, Person as PersonIcon, Badge as BadgeIcon } from '@mui/icons-material';
 
-export default function UnitMembersTable({ 
-  selectedUnit, 
-  unitData, 
-  loading, 
+export default function UnitMembersTable({
+  subunits = [],
+  selectedUnit,
+  onSelectSubunit,
+  unitData = [],
+  loading,
   onDeleteClick,
   onPositionClick,
   studentData
 }) {
-  if (!selectedUnit) return null;
-
-  // สร้าง map ของสมาชิกที่มีอยู่ตาม subunit และ position
-  const membersBySubunit = {};
-  unitData.forEach(member => {
-    if (member.subunitId) {
-      if (!membersBySubunit[member.subunitId]) {
-        membersBySubunit[member.subunitId] = {};
-      }
-      membersBySubunit[member.subunitId][member.positionCode] = member;
-     
-    }
-  });
-
-  const [expandedSubunits, setExpandedSubunits] = React.useState({});
-
-  const toggleSubunit = (subunitId) => {
-    setExpandedSubunits(prev => ({
-      ...prev,
-      [subunitId]: !prev[subunitId]
-    }));
-  };
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+        <CircularProgress size={48} thickness={4} />
+      </Box>
+    );
+  }
 
   return (
-    <Card sx={{ boxShadow: 3 }}>
+    <Card 
+      sx={{
+        boxShadow: '0 8px 32px rgba(0,0,0,0.1)', 
+      height: '100%', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      width: '100%',
+      borderRadius: 3,
+      border: '1px solid rgba(25, 118, 210, 0.1)',
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
+        transform: 'translateY(-2px)'
+      }}}
+    >
       <CardContent sx={{ p: 3 }}>
-        <Typography variant="h6" fontWeight="bold" gutterBottom>
-          หน่วยย่อยในหน่วย {selectedUnit.name}
-        </Typography>
-        
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          คลิกหน่วยย่อยเพื่อดูตำแหน่งและลำดับที่ว่าง
-        </Typography>
-        
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-            <CircularProgress />
-          </Box>
+        {/* Header Section */}
+        <Box sx={{ mb: 3 }}>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              fontWeight: 600,
+              color: 'primary.main',
+              mb: 0.5,
+              letterSpacing: 0.3
+            }}
+          >
+            จัดการตำแหน่งในหน่วยงาน
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            เลือกหน่วยเพื่อดูและจัดการตำแหน่งในหน่วยงาน
+          </Typography>
+        </Box>
+
+        <Divider sx={{ mb: 3 }} />
+
+        {/* Search Section */}
+        <Autocomplete
+          options={subunits}
+          getOptionLabel={(option) => `${option.name} (${option.parentUnit})`}
+          value={selectedUnit}
+          onChange={(e, val) => onSelectSubunit && onSelectSubunit(val)}
+          renderInput={(params) => (
+            <TextField 
+              {...params} 
+              label="ค้นหาหน่วยย่อย" 
+              placeholder="กรุณาเลือกหน่วยย่อย..."
+              variant="outlined"
+            />
+          )}
+          sx={{ mb: 3 }}
+          ListboxProps={{
+            sx: {
+              '& .MuiAutocomplete-option': {
+                fontSize: '0.95rem',
+                py: 1.5
+              }
+            }
+          }}
+        />
+
+        {!selectedUnit ? (
+          <Paper 
+            elevation={0}
+            sx={{ 
+              p: 6, 
+              textAlign: 'center',
+              backgroundColor: 'grey.50',
+              border: '2px dashed',
+              borderColor: 'grey.300',
+              borderRadius: 2
+            }}
+          >
+            <BadgeIcon sx={{ fontSize: 64, color: 'grey.400', mb: 2 }} />
+            <Typography variant="h6" color="text.secondary" gutterBottom sx={{ fontWeight: 500 }}>
+              กรุณาเลือกหน่วยย่อย
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              เลือกหน่วยย่อยจากช่องค้นหาด้านบน เพื่อแสดงรายการตำแหน่งและข้อมูลสมาชิก
+            </Typography>
+          </Paper>
         ) : (
-          <TableContainer component={Paper} variant="outlined">
-            <Table>
-              <TableHead>
-                <TableRow sx={{ bgcolor: 'grey.50' }}>
-                  <TableCell sx={{ fontWeight: 'bold', width: '40px' }}></TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>หน่วยย่อย</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>จำนวนตำแหน่ง</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>สถานะ</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>รายละเอียด</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>จัดการ</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {selectedUnit.subunits?.map((subunit) => {
-                  const subunitMembers = membersBySubunit[subunit.name] || {};
-                  const occupiedSlots = Object.keys(subunitMembers).length;
-                  const isExpanded = expandedSubunits[subunit.name];
-                  const memberNames = Object.values(membersBySubunit)
-                    .flatMap(subunit => Object.values(subunit))
-                    .map(student => student.name);
+          <>
+            {/* Unit Info Header */}
+            <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                หน่วยย่อย: {selectedUnit.name}
+              </Typography>
+              <Chip 
+                label={`${unitData.length} ตำแหน่ง`} 
+                size="small" 
+                color="primary"
+                variant="outlined"
+              />
+              <Chip 
+                label={`${unitData.filter(p => p.studentNumber).length} คน`} 
+                size="small" 
+                color="success"
+                variant="outlined"
+              />
+            </Box>
 
-                  const isAssigned = !memberNames.includes(studentData?.name);
-                                
+            <TableContainer 
+              component={Paper} 
+              elevation={0}
+              sx={{ 
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 1
+              }}
+            >
+              <Table sx={{ minWidth: 650 }}>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: 'primary.main' }}>
+                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>รหัสตำแหน่ง</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>ชื่อตำแหน่ง</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>รหัสนักเรียน</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>ชื่อ-นามสกุล</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2, textAlign: 'center' }}>
+                      การดำเนินการ
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
 
-               
-                 
-                  return (
-                    <React.Fragment key={subunit.id}>
-                      {/* Subunit Header Row */}
-                      <TableRow 
-                        sx={{ 
-                          backgroundColor: 'primary.50',
-                          '&:hover': { backgroundColor: 'primary.100' }
+                <TableBody>
+                  {unitData.map((pos, index) => {
+                    const isEmpty = !pos.studentId;
+                    const canAssign = isEmpty && !!studentData;
+                    const studentHasAssignedPosition = !!studentData && !!studentData.assigned;
+
+                    return (
+                      <TableRow
+                        key={pos.id}
+                        hover={canAssign}
+                        sx={{
+                          cursor: canAssign ? 'pointer' : 'default',
+                          backgroundColor: index % 2 === 0 ? 'grey.50' : 'white',
+                          '&:hover': canAssign ? { 
+                            backgroundColor: 'success.50',
+                            transition: 'background-color 0.2s'
+                          } : {},
                         }}
                       >
-                        <TableCell>
-                          <Button
-                            size="small"
-                            onClick={() => toggleSubunit(subunit.name)}
-                            sx={{ minWidth: 'auto', p: 0.5 }}
-                          >
-                            {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                          </Button>
+                        <TableCell sx={{ py: 2.5, fontFamily: 'monospace', fontWeight: 500 }}>
+                          {pos.positionCode}
                         </TableCell>
-                        <TableCell>
-                          <Box>
-                            <Typography variant="body1" fontWeight="bold" color="primary.dark">
-                              {subunit.name}
+                        
+                        <TableCell sx={{ py: 2.5, fontWeight:1000 }}>
+                          {pos.positionName}
+                        </TableCell>
+                        
+                        <TableCell sx={{ py: 2.5, fontFamily: 'monospace' }}>
+                          {pos.studentNumber ? (
+                            <Chip 
+                              label={pos.studentNumber} 
+                              size="small"
+                              sx={{ fontFamily: 'monospace' }}
+                            />
+                          ) : (
+                            <Typography variant="body2" color="text.disabled">
+                              —
                             </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              หน่วยย่อย
-                            </Typography>
-                          </Box>
+                          )}
                         </TableCell>
-                        <TableCell>
-                          <Chip 
-                            label={`${occupiedSlots}/${subunit.capacity} ตำแหน่ง`}
-                            size="small"
-                            color={occupiedSlots >= subunit.capacity ? 'error' : 'success'}
-                            variant="filled"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2" color="text.secondary">
-                            {occupiedSlots === 0 ? 'ว่างทั้งหมด' : 
-                             occupiedSlots === subunit.capacity ? 'เต็มแล้ว' : 
-                             `ว่าง ${subunit.capacity - occupiedSlots} ตำแหน่ง`}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2" color="text.secondary">
-                            คลิกเพื่อ{isExpanded ? 'ซ่อน' : 'แสดง'}ตำแหน่ง
-                          </Typography>
-                        </TableCell>
-                        <TableCell sx={{ textAlign: 'center' }}>
-                          <Button
-                            variant="outlined"
-                            size="small"
-                            onClick={() => toggleSubunit(subunit.name)}
-                            sx={{ minWidth: 80 }}
-                          >
-                            {isExpanded ? 'ซ่อน' : 'แสดง'}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-
-                      {/* Subunit Positions */}
-                      <TableRow>
-                        <TableCell colSpan={6} sx={{ p: 0, border: 'none' }}>
-                          <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-                            <Box sx={{ p: 2, bgcolor: 'grey.50' }}>
-                              <Typography variant="subtitle2" fontWeight="bold" sx={{ mb: 2 }}>
-                                ตำแหน่งในหน่วยย่อย {subunit.name}
+                        
+                        <TableCell sx={{ py: 2.5 }}>
+                          {(pos.studentId || pos.name) ? (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                              <Avatar 
+                                sx={{ 
+                                  width: 36, 
+                                  height: 36,
+                                  backgroundColor: 'primary.main'
+                                }}
+                              >
+                                <PersonIcon sx={{ fontSize: 20 }} />
+                              </Avatar>
+                              <Typography variant="body2" sx={{ fontWeight: 1000 }}>
+                                นนส.{pos.name  || 'ไม่ระบุ'}
                               </Typography>
-                              <Table size="small">
-                                <TableHead>
-                                  <TableRow>
-                                    <TableCell sx={{ fontWeight: 'bold' ,width:'200px'}}>ตำแหน่ง</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold' ,width:'170px'}}>เลขที่ตำแหน่ง</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold', width:'170px'}}>รหัสนักเรียน</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold' ,width:'400px'}}>ผู้ดำรงตำแหน่ง</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>จัดการ</TableCell>
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                  {subunit.positions?.map((position) => {
-                                    const assignedMember = subunitMembers[position.code];
-                                    const isEmpty = !assignedMember;
-                                    const canAssign = isEmpty && studentData && isAssigned; // isAssigned is check student in list data
-                                 
-                                   
-                                   
-                                    return (
-                                      <TableRow 
-                                        key={`${subunit.id}-${position.order}`}
-                                        hover={canAssign}
-                                        sx={{
-                                          cursor: canAssign ? 'pointer' : 'default',
-                                          backgroundColor: isEmpty ? 'success.25' : 'inherit',
-                                          '&:hover': canAssign ? {
-                                            backgroundColor: 'success.50'
-                                          } : {}
-                                        }}
-                                        onClick={() => canAssign && onPositionClick({
-                                          posId: position.posId,
-                                          subunitName: subunit.name,
-                                          order: position.order,
-                                          code: position.code,
-                                          name: position.name
-                                        })}
-                                      >
-                                        <TableCell>
-                                          <Box>
-                                            <Typography variant="body2" fontWeight="medium">
-                                              {position.name || 'ตำแหน่ง'}
-                                            </Typography>
-                                          </Box>
-                                        </TableCell>
-                                        <TableCell>
-                                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Typography variant="body2" fontWeight="bold">
-                                            {position.code}
-                                            </Typography>
-                                            {isEmpty && canAssign && (
-                                              <Chip 
-                                                label="ว่าง" 
-                                                size="small" 
-                                                color="warning" 
-                                                variant="outlined"
-                                                sx={{ fontSize: '0.7rem' }}
-                                              />
-                                            )}
-                                          </Box>
-                                        </TableCell>
-                                        <TableCell>
-                                          <Typography variant="body2" color="text.secondary">
-                                            {assignedMember ? assignedMember.studentId : '-'}
-                                          </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                          {assignedMember ? (
-                                            
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                              <Avatar sx={{ width: 28, height: 28 }}>
-                                                <PersonIcon sx={{ fontSize: 16 }} />
-                                              </Avatar>
-                                              <Typography variant="body2">
-                                                นนส. {assignedMember.name}
-                                              </Typography>
-                                            </Box>
-                                          ) : (
-                                            <Typography variant="body2" color="text.secondary">
-                                              {canAssign ? 'คลิกเพื่อเพิ่ม' : '-'}
-                                            </Typography>
-                                          )}
-                                        </TableCell>
-                                        <TableCell sx={{ textAlign: 'center' }}>
-                                          {assignedMember ? (
-                                            <Button
-                                              variant="outlined"
-                                              color="error"
-                                              size="small"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                onDeleteClick(assignedMember);
-                                              }}
-                                              startIcon={<DeleteIcon />}
-                                              sx={{
-                                                minWidth: 70,
-                                                fontSize: '0.75rem',
-                                                '&:hover': {
-                                                  backgroundColor: 'error.50'
-                                                }
-                                              }}
-                                            >
-                                              ลบ
-                                            </Button>
-                                          ) : canAssign ? (
-                                            <Button
-                                              variant="contained"
-                                              color="success"
-                                              size="small"
-                                              startIcon={<AddIcon />}
-                                              sx={{ 
-                                                minWidth: 70,
-                                                fontSize: '0.75rem'
-                                              }}
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                onPositionClick({
-                                                  posId: position.posId,
-                                                  subunitName: subunit.name,
-                                                  order: position.order,
-                                                  code: position.code,
-                                                  name: position.name
-                                                });
-                                              }}
-                                            >
-                                              เพิ่ม
-                                            </Button>
-                                          ) : (
-                                            <Typography variant="body2" color="text.disabled">
-                                              -
-                                            </Typography>
-                                          )}
-                                        </TableCell>
-                                      </TableRow>
-                                    );
-                                  })}
-                                </TableBody>
-                              </Table>
                             </Box>
-                          </Collapse>
+                          ) : (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                             <Typography variant="body2" color="text.disabled">
+                                <typography variant="body2" color="text.disabled">—</typography>
+                              </Typography>
+                            </Box>
+                          )}
+                        </TableCell>
+                        
+                        <TableCell sx={{ py: 2.5, textAlign: 'center' }}>
+                          {pos.studentNumber ? (
+                            // กรณีมีนักเรียนอยู่ในตำแหน่งแล้ว
+                            <Chip 
+                              label="ไม่ว่าง" 
+                              size="small" 
+                              color="error"
+                              variant="filled"
+                              sx={{ fontWeight: 500 }}
+                            />
+                          ) : !studentData ? (
+                            // กรณียังไม่มีการค้นหานักเรียน
+                            <Chip 
+                              label="ว่าง" 
+                              size="small" 
+                              color="success"
+                              variant="filled"
+                              sx={{ fontWeight: 500 }}
+                            />
+                          ) : studentHasAssignedPosition ? (
+                            // กรณีค้นหานักเรียนแล้ว แต่นักเรียนมีตำแหน่งแล้ว
+                            <Chip 
+                              label="ว่าง" 
+                              size="small" 
+                              color="success"
+                              variant="filled"
+                              sx={{ fontWeight: 500 }}
+                            />
+                          ) : (
+                            // กรณีว่างและนักเรียนที่เลือกยังไม่มีตำแหน่ง => แสดงปุ่มเพิ่ม
+                            <Button
+                              variant="contained"
+                              color="success"
+                              size="medium"
+                              startIcon={<AddIcon />}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onPositionClick(pos);
+                              }}
+                              sx={{
+                                textTransform: 'none',
+                                fontWeight: 500,
+                                px: 3,
+                                boxShadow: 'none',
+                                '&:hover': {
+                                  boxShadow: 1
+                                }
+                              }}
+                            >
+                              เพิ่ม
+                            </Button>
+                          )}
                         </TableCell>
                       </TableRow>
-                    </React.Fragment>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            {unitData.length === 0 && (
+              <Box sx={{ textAlign: 'center', py: 4 }}>
+                <Typography variant="body2" color="text.secondary">
+                  ไม่พบข้อมูลตำแหน่งในหน่วยย่อยนี้
+                </Typography>
+              </Box>
+            )}
+          </>
         )}
       </CardContent>
     </Card>

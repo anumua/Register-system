@@ -4,9 +4,10 @@ const prisma = new PrismaClient();
 
 export async function PUT(request, { params }) {
   try {
-    const { pos_id } = params;
+    const { pos_id } = await params;
     const { nco_id, action } = await request.json();
 
+    console.log(pos_id, nco_id, action,'2002202');
     if (action === 'assign') {
       // Assign student to position
       const updatedPosition = await prisma.positions.update({

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, act } from 'react';
 import {
   Box,
   Container,
@@ -12,423 +12,311 @@ import {
   useTheme
 } from '@mui/material';
 import {
-  Add as AddIcon,
   ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
 
-// Import components
+// Components
 import StudentSearchCard from './components/StudentSearchCard';
-import UnitSelectionCard from './components/UnitSelectionCard';
 import UnitMembersTable from './components/UnitMembersTable';
-import UnitSelectionDialog from './components/UnitSelectionDialog';
 import DeleteConfirmDialog from './components/DeleteConfirmDialog';
 import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
-  // States
   const [studentId, setStudentId] = useState('');
   const [studentData, setStudentData] = useState(null);
-  const [selectedUnit, setSelectedUnit] = useState(null);
   const [unitData, setUnitData] = useState([]);
+  const [militaryUnits, setMilitaryUnits] = useState([]);
+  const [subunits, setSubunits] = useState([]);
+  const [selectedSubunit, setSelectedSubunit] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [unitDialogOpen, setUnitDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const router = useRouter();
-
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  // Real data สำหรับหน่วยทหาร พร้อมหน่วยย่อย
-  const [militaryUnits, setMilitaryUnits] = useState([]);
+  const router = useRouter();
 
 
-
-  // Load military units data on component mount
+  console.log()
+  // โหลดข้อมูลหน่วยทั้งหมดและแตกหน่วยย่อยออกมา
   useEffect(() => {
     loadMilitaryUnits();
   }, []);
 
   const loadMilitaryUnits = async () => {
     try {
+      setLoading(true);
       const response = await fetch('/api/positions');
       const data = await response.json();
-      
+
       if (data.units) {
-        const formattedUnits = data.units.map((unit, index) => ({
-          id: index + 1,
-          name: unit.unitName,
-          code: unit.unitName, // You might want to add a proper code field
-          capacity: unit.subunits.reduce((total, subunit) => total + subunit.capacity, 0),
-          current: unit.subunits.reduce((total, subunit) => total + subunit.current, 0),
-          subunits: unit.subunits.map((subunit, subIndex) => ({
-            id: `${index + 1}-${subIndex + 1}`,
+        setMilitaryUnits(data.units);
+
+        // แตก subunits ทั้งหมดจากทุก unit
+        const allSubunits = data.units.flatMap((unit) =>
+          unit.subunits.map((subunit) => ({
+            id: subunit.subunitId,
             name: subunit.subunitName,
-            capacity: subunit.capacity,
-            current: subunit.current,
-            description: `หน่วยย่อย ${subunit.subunitName}`,
+            parentUnit: unit.unitName,
             positions: subunit.positions
           }))
-        }));
-        setMilitaryUnits(formattedUnits);
+        );
+        setSubunits(allSubunits);
+
+        // คืนค่าเพื่อให้ caller สามารถ re-select ได้
+        return allSubunits;
       }
     } catch (err) {
       console.error('Error loading military units:', err);
-      setError('เกิดข้อผิดพลาดในการโหลดข้อมูลหน่วยทหาร');
+      setError('เกิดข้อผิดพลาดในการโหลดข้อมูลหน่วย');
+    } finally {
+      setLoading(false);
     }
+    return [];
   };
 
-  
-  // Function สำหรับค้นหานักเรียนจากฐานข้อมูลจริง
+  // ค้นหานักเรียน
   const searchStudent = async (id) => {
     setSearchLoading(true);
     setError('');
-    
+
     try {
       const response = await fetch(`/api/students?nco_number=${id}`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
       const data = await response.json();
-      
+
       if (data.error) {
-        setError(`เกิดข้อผิดพลาด: ${data.error}`);
+        setError(data.error);
         setStudentData(null);
       } else if (data.students && data.students.length > 0) {
         const student = data.students[0];
+
+        // ตรวจสอบว่าผู้ค้นหามีตำแหน่งแล้วหรือไม่ จาก militaryUnits (pos.occupieNumber ตาม API)
+        const assigned = militaryUnits.some((unit) =>
+          unit.subunits.some((sub) =>
+            sub.positions.some((p) => p.occupieNumber && String(p.occupieNumber) === String(student.studentId))
+          )
+        );
+
         setStudentData({
           id: student.id,
           name: student.name,
           rank: student.rank,
           class: student.class,
           studentId: student.studentId,
-          remark: !student.remark || student.remark === "null null ตำแหน่ง null" ? '' : student.remark
+          assigned: assigned, // <-- เพิ่ม flag ตรงนี้
+          remark:
+            !student.remark || student.remark === 'null null ตำแหน่ง null'
+              ? ''
+              : student.remark
         });
       } else {
         setError('ไม่พบข้อมูลนักเรียนนายสิบ');
         setStudentData(null);
       }
     } catch (err) {
-      setError(`เกิดข้อผิดพลาดในการค้นหา: ${err.message}`);
-      setStudentData(null);
+      console.error(err);
+      setError('เกิดข้อผิดพลาดในการค้นหานักเรียน');
     } finally {
       setSearchLoading(false);
     }
   };
 
-  // Function สำหรับเลือกหน่วย
-  const selectUnit = async (unit) => {
-    setLoading(true);
-    setSelectedUnit(unit);
-    setUnitDialogOpen(false);
-    
-    try {
-      // Load real unit data with positions
-      const response = await fetch('/api/positions');
-      const data = await response.json();
-      
-      if (data.units) {
-        const selectedUnitData = data.units.find(u => u.unitName === unit.name);
-        if (selectedUnitData) {
-          // Format unit data for display
-          const formattedUnitData = [];
-          
-          for (const subunit of selectedUnitData.subunits) {
-            for (const position of subunit.positions) {
-              if (position.occupiedBy) {
-                // Get student data for occupied positions
-                const studentResponse = await fetch(`/api/students?nco_id=${position.occupiedBy}`);
-                const studentData = await studentResponse.json();
-                
-                if (studentData.students && studentData.students.length > 0) {
-                  const student = studentData.students[0];
-                  formattedUnitData.push({
-                    id: position.posId,
-                    studentId: student.studentId,
-                    name: student.name,
-                    rank: student.rank,
-                    class: student.class,
-                    joinDate: position.timeSelected ? new Date(position.timeSelected).toLocaleDateString('th-TH') : '',
-                    subunitId: subunit.subunitName,
-                    subunitName: subunit.subunitName,
-                    positionOrder: position.order,
-                    positionCode: position.code,
-                    positionName: position.name
-                  });
-                }
-              }
-            }
-          }
-          
-          setUnitData(formattedUnitData);
-        }
-      }
-    } catch (err) {
-      console.error('Error loading unit data:', err);
-      setError('เกิดข้อผิดพลาดในการโหลดข้อมูลหน่วย');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Function สำหรับเพิ่มนักเรียนเข้าตำแหน่ง
-  const addStudentToPosition = async (position) => {
-    if (!studentData || !selectedUnit) {
-      setError('กรุณาค้นหานักเรียนและเลือกหน่วยก่อน');
+  // เลือกหน่วยย่อย
+  const selectSubunit = (subunit) => {
+    setSelectedSubunit(subunit);
+    if (!subunit) {
+      setUnitData([]);
       return;
     }
 
-    setLoading(true);
-    setError('');
-    console.log(position, '-2-2-')
-    try {
-      // Check if student already in unit
-      const existingStudent = unitData.find(member => member.studentId === studentData.id);
-      if (existingStudent) {
-        setError('นักเรียนคนนี้อยู่ในหน่วยแล้ว');
-        setLoading(false);
-        return;
-      }
+    // แสดงตำแหน่งทั้งหมดของหน่วยย่อย (occupied หรือ ว่าง)
+    console.log(subunit, 'subunit');
+    const members = subunit.positions.map((pos) => ({
+      id: pos.posId,
+      // เก็บทั้ง studentId (ใช้ตรวจว่าว่างหรือไม่) และ studentNumber (ใช้แสดงในคอลัมน์)
+      studentId: pos.occupieNumber || null,
+      studentNumber: pos.occupieNumber || null,
+      name: pos.occupiedBy?.trim() ? pos.occupiedBy : null,
+      rank: null,
+      class: null,
+      joinDate: pos.timeSelected
+        ? new Date(pos.timeSelected).toLocaleDateString('th-TH')
+        : '',
+      subunitId: subunit.id,
+      subunitName: subunit.name,
+      positionCode: pos.code,
+      positionName: pos.name
+    }));
 
-      // Assign student to position via API
-      const response = await fetch(`/api/positions/${position.posId}`, {
+    setUnitData(members);
+  };
+
+  // เพิ่มนักเรียนเข้าตำแหน่ง
+  const addStudentToPosition = async (position) => {
+    console.log(position, 'position');
+    if (!studentData || !selectedSubunit) {
+      setError('กรุณาค้นหานักเรียนและเลือกหน่วยย่อยก่อน');
+      return;
+    }
+
+    const exists = unitData.find((m) => m.studentId === studentData.studentId);
+    if (exists) {
+      setError('นักเรียนคนนี้อยู่ในหน่วยนี้แล้ว');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // ใช้ PUT ตาม API ของ server และส่ง nco_id + action
+      const response = await fetch(`/api/positions/${position.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nco_id: studentData.id,
-          action: 'assign'
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nco_id: studentData.id, action: 'assign' })
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        
-        // Add student to local state
-        const newMember = {
-          id: position.posId,
-          studentId: studentData.studentId,
-          name: studentData.name,
-          rank: studentData.rank,
-          class: studentData.class,
-          joinDate: new Date().toLocaleDateString('th-TH'),
-          subunitId: position.subunitName,
-          subunitName: position.subunitName,
-          positionOrder: position.code,
-          positionCode: position.code,
-          positionName: position.name
-        };
-        
-        setUnitData([...unitData, newMember]);
-        setSuccess(`เพิ่ม ${studentData.name} เข้า${position.subunitName} ตำแหน่ง ${position.name} เรียบร้อยแล้ว`);
-        
-        // Clear student data
-        setStudentData(null);
-        setStudentId('');
-        
-        // Reload units to update capacity
-        loadMilitaryUnits();
-      } else {
-        const errorData = await response.json();
-        setError(errorData.error || 'เกิดข้อผิดพลาดในการเพิ่มนักเรียน');
+      if (!response.ok) throw new Error('เพิ่มนักเรียนไม่สำเร็จ');
+
+      await response.json();
+
+      // รีเฟรชข้อมูลจากเซิร์ฟเวอร์และ re-select หน่วยย่อยเดิม
+      const refreshedSubunits = await loadMilitaryUnits();
+      if (selectedSubunit) {
+        const foundSub = refreshedSubunits.find(s => String(s.id) === String(selectedSubunit.id));
+        if (foundSub) {
+          selectSubunit(foundSub); // จะอัปเดต unitData ให้ตรงกับ server
+        }
       }
-      
+
+      // อัปเดต studentData ให้แสดงว่ามีตำแหน่งแล้ว
+      setStudentData(prev => prev ? { ...prev, assigned: true } : prev);
+
+      setSuccess(
+        `เพิ่ม${studentData.name} เข้า${selectedSubunit?.name || ''} ตำแหน่ง${position.positionName} สำเร็จ`
+      );
+      setStudentId('');
+      setStudentData(null);
+      setSelectedSubunit(null);
+      // หากต้องการล้างการเลือกนักเรียนหลังเพิ่ม ให้ uncomment บรรทัดถัดไป
+      // setStudentData(null);
     } catch (err) {
-      console.error('Error assigning student to position:', err);
+      console.error(err);
       setError('เกิดข้อผิดพลาดในการเพิ่มนักเรียน');
     } finally {
       setLoading(false);
     }
   };
 
-  // Function สำหรับลบนักเรียนออกจากหน่วย
+  // ลบนักเรียนออกจากหน่วย
+  const handleDeleteClick = (member) => {
+    setStudentToDelete(member);
+    setDeleteDialogOpen(true);
+  };
+
   const removeStudentFromUnit = async () => {
     if (!studentToDelete) return;
 
-    setLoading(true);
-    setError('');
-    
     try {
-      // Remove student from position via API
+      setLoading(true);
+      // ใช้ PUT กับ action unassign (route รับ PUT)
       const response = await fetch(`/api/positions/${studentToDelete.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'unassign'
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nco_id: null, action: 'unassign' })
       });
 
-      if (response.ok) {
-        // Remove student from local state
-        const updatedUnitData = unitData.filter(member => member.id !== studentToDelete.id);
-        setUnitData(updatedUnitData);
-        setSuccess(`ลบ ${studentToDelete.name} ออกจากหน่วย ${selectedUnit.name} เรียบร้อยแล้ว`);
-        
-        // Close dialog and clear state
-        setDeleteDialogOpen(false);
-        setStudentToDelete(null);
-        
-        // Reload units to update capacity
-        loadMilitaryUnits();
-      } else {
-        const errorData = await response.json();
-        setError(errorData.error || 'เกิดข้อผิดพลาดในการลบนักเรียน');
+      if (!response.ok) throw new Error('ลบไม่สำเร็จ');
+
+      await response.json();
+
+      // รีเฟรชข้อมูลจากเซิร์ฟเวอร์และ re-select หน่วยย่อยเดิม
+      const refreshedSubunits = await loadMilitaryUnits();
+      if (selectedSubunit) {
+        const foundSub = refreshedSubunits.find(s => String(s.id) === String(selectedSubunit.id));
+        if (foundSub) selectSubunit(foundSub);
       }
-      
+
+      // ถ้านักเรียนที่เพิ่งลบตรงกับ studentData ที่เลือกอยู่ ให้อัปเดต flag assigned
+      setStudentData(prev => {
+        if (!prev) return prev;
+        // studentToDelete.studentId อาจเก็บรหัสนนส. ของตำแหน่งที่ถูกลบ
+        if (String(prev.studentId) === String(studentToDelete.studentId)) {
+          return { ...prev, assigned: false };
+        }
+        return prev;
+      });
+
+      setSuccess('ลบสำเร็จ');
     } catch (err) {
-      console.error('Error removing student from position:', err);
+      console.error(err);
       setError('เกิดข้อผิดพลาดในการลบนักเรียน');
     } finally {
+      setDeleteDialogOpen(false);
+      setStudentToDelete(null);
       setLoading(false);
     }
   };
 
-  // Function สำหรับเปิด dialog ยืนยันการลบ
-  const handleDeleteClick = (student) => {
-    setStudentToDelete(student);
-    setDeleteDialogOpen(true);
-  };
-
-  // Function สำหรับ reset การค้นหา
-  const handleResetSearch = () => {
-    setStudentId('');
-    setStudentData(null);
-    setError('');
-    setSuccess('');
-  };
-
-
   return (
-    <Container maxWidth='lg' sx={{ py: 6, px: 4 }}>
-        <Button
-          startIcon={<ArrowBackIcon />}
-          onClick={() => router.push('/main')}
-          sx={{ mb: 2, fontSize: isMobile ? '0.875rem' : '1rem' }}
-          size={isMobile ? 'small' : 'medium'}
-        >
-          กลับหน้าหลัก
-        </Button>
-        
-      {/* Header */}
-      <Box sx={{ 
-        mb: 6, 
-        textAlign: 'center',
-        py: 4,
-        background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
-        borderRadius: 3,
-        color: 'white',
-        boxShadow: '0 8px 32px rgba(25, 118, 210, 0.3)'
-      }}>
-        <Typography variant="h3" fontWeight="bold" gutterBottom sx={{ mb: 1 }}>
-          🎖️ ระบบลงทะเบียนเลือกตำแหน่งในหน่วยทหาร
-        </Typography>
-        <Typography variant="h6" sx={{ opacity: 0.9, fontWeight: 400 }}>
-          ค้นหานักเรียนนายสิบและเลือกหน่วยย่อยเพื่อดูตำแหน่ง
-        </Typography>
-        <Box sx={{ 
-          mt: 3, 
-          display: 'flex', 
-          justifyContent: 'center', 
-          gap: 3,
-          flexWrap: 'wrap',
-          alignItems: 'center'
-        }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Box sx={{ 
-              width: 8, 
-              height: 8, 
-              borderRadius: '50%', 
-              bgcolor: '#4caf50' 
-            }} />
-            <Typography variant="body2">ระบบออนไลน์</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Box sx={{ 
-              width: 8, 
-              height: 8, 
-              borderRadius: '50%', 
-              bgcolor: '#ff9800' 
-            }} />
-            <Typography variant="body2">ปลอดภัย</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Box sx={{ 
-              width: 8, 
-              height: 8, 
-              borderRadius: '50%', 
-              bgcolor: '#e91e63' 
-            }} />
-            <Typography variant="body2">รวดเร็ว</Typography>
-          </Box>
-        </Box>
-      </Box>
+    <Container maxWidth="lg" sx={{ py: 1, px: 2 }}>
+      {/* กลับหน้าหลัก */}
+      <Button
+        startIcon={<ArrowBackIcon />}
+        onClick={() => router.push('/main')}
+        sx={{ mb: 2 }}
+        size={isMobile ? 'small' : 'medium'}
+      >
+        กลับหน้าหลัก
+      </Button>
 
-       {/* Alert Messages */}
-       {error && (
-        <Alert severity="error" sx={{ mt: 2 }} onClose={() => setError('')}>
-          {error}
-        </Alert>
-      )}
-      
-      {success && (
-        <Alert severity="success" sx={{ mt: 2 }} onClose={() => setSuccess('')}>
-          {success}
-        </Alert>
-      )}
+     
 
-        {/* Search and Unit Selection Section */}
-        <Box marginTop={1.5} sx={{ display: 'flex', gap: 4, mb: 4, flexDirection: { xs: 'column', md: 'row' } }}>
-          <Box sx={{ flex: '0 0 65%', minWidth: 0 }}>
-            <StudentSearchCard
-              studentId={studentId}
-              setStudentId={setStudentId}
-              studentData={studentData}
-              searchLoading={searchLoading}
-              onSearch={searchStudent}
-              onReset={handleResetSearch}
-            />
-          </Box>
-          <Box sx={{ flex: '0 0 32.5%', minWidth: 0 }}>
-            <UnitSelectionCard
-              selectedUnit={selectedUnit}
-              unitData={unitData}
-              onOpenDialog={() => setUnitDialogOpen(true)}
-            />
-          </Box>
-        </Box>
+      {error && <Alert severity="error">{error}</Alert>}
+      {success && <Alert severity="success">{success}</Alert>}
 
+      <Grid container spacing={3} sx={{ mt: 2 }}>
+        {/* ค้นหานักเรียน */}
+       
+          <StudentSearchCard
+            studentId={studentId}
+            setStudentId={setStudentId}
+            studentData={studentData}
+            searchLoading={searchLoading}
+            onSearch={searchStudent}
+            onReset={() => {
+              setStudentData(null);
+              setStudentId('');
+              setError('');
+              setSuccess('');
+            }}
+          />
   
+      </Grid>
 
-      
-
-      {/* Unit Data Table */}
-      
-      <UnitMembersTable
-        selectedUnit={selectedUnit}
-        unitData={unitData}
-        loading={loading}
-        onDeleteClick={handleDeleteClick}
-        onPositionClick={addStudentToPosition}
-        studentData={studentData}
-      />
-
-      {/* Unit Selection Dialog */}
-      <UnitSelectionDialog
-        open={unitDialogOpen}
-        onClose={() => setUnitDialogOpen(false)}
-        militaryUnits={militaryUnits}
-        onSelectUnit={selectUnit}
-      />
-
-      {/* Delete Confirmation Dialog */}
+       {/* ค้นหาหน่วยย่อยและแสดงตาราง */}
+         <Grid item xs={12} md={12} marginTop={2}>
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', height: 200 }}>
+              <CircularProgress />
+            </Box>
+          ) :
+            <UnitMembersTable
+              subunits={subunits}
+              selectedUnit={selectedSubunit}
+              onSelectSubunit={selectSubunit}
+              unitData={unitData}
+              loading={loading}
+              onDeleteClick={handleDeleteClick}
+              onPositionClick={addStudentToPosition}
+              studentData={studentData}
+            />
+          }
+         </Grid>
+      {/* Delete Confirmation */}
       <DeleteConfirmDialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
@@ -436,8 +324,6 @@ export default function RegisterPage() {
         loading={loading}
         onConfirmDelete={removeStudentFromUnit}
       />
-
-     
     </Container>
   );
 }

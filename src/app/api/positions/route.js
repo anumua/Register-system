@@ -6,7 +6,7 @@ export async function GET() {
   try {
 
     const rows = await prisma.$queryRaw`
-    select a.*, concat(b.first_name,' ', b.last_name) as student_name
+    select a.*, concat(b.first_name,' ', b.last_name) as student_name, b.nco_number
     from positions a
     left join students b on a.nco_id = b.nco_id
     order by unit_name asc ,  subunit_name asc ,  pos_pronum asc
@@ -43,6 +43,7 @@ export async function GET() {
         remark: row.pos_mark || null,
         king: row.pos_king || null,
         occupiedBy: row.student_name || null,
+        occupieNumber: row.nco_number || null,
         timeSelected: row.time_select || null,
         status: row.nco_id ? "occupied" : "vacant",
       });
