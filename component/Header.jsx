@@ -64,19 +64,45 @@ export default function HeaderBar() {
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', minHeight: 72 }}>
         {/* Left side: Logo + Title */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, md: 2 } }}>
-          <StorefrontIcon sx={{ fontSize: { xs: 28, md: 36 }, color: '#fff' }} />
-          <Typography 
-            variant="h5" 
-            component="div" 
-            sx={{ 
-              fontWeight: 'bold', 
-              letterSpacing: 1,
-              fontSize: { xs: '1.1rem', md: '1.5rem' }
-            }}
-          >
-            ระบบลงทะเบียนหน่วย
-          </Typography>
-        </Box>
+  {/* โลโก้ในกรอบสี่เหลี่ยม */}
+  <Box
+    sx={{
+      width: { xs: 40, md: 55 },
+      height: { xs: 40, md: 55 },
+      borderRadius: 2, // ความโค้งของมุม 2 = โค้งเล็ก ถ้าอยากสี่เหลี่ยมเป๊ะใช้ 0
+      overflow: 'hidden',
+      bgcolor: '#fff', // พื้นหลัง
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <img
+      src="/logo.jpg" // ✅ เปลี่ยน path ตามจริง เช่น public/logo.png
+      alt="Logo"
+      style={{
+        width: '80%',
+        height: '80%',
+        objectFit: 'contain',
+      }}
+    />
+  </Box>
+
+  {/* ข้อความชื่อระบบ */}
+  <Typography
+    variant="h5"
+    component="div"
+    sx={{
+      fontWeight: 'bold',
+      letterSpacing: 1,
+      fontSize: { xs: '1.1rem', md: '1.5rem' },
+      color: '#fff',
+    }}
+  >
+    ระบบเลือกหน่วยบรรจุนักเรียนนายสิบ
+  </Typography>
+</Box>
+
 
         {/* Right side: Auth-aware UI */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

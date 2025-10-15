@@ -199,18 +199,19 @@ export default function UnitMembersTable({
               <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary', flex: 1 }}>
                 หน่วยย่อย: {selectedUnit.name}
               </Typography>
+             
               <Chip
-                label={`${unitData.length} ตำแหน่ง`}
+                label={`เลือกแล้ว ${unitData.filter(p => p.studentNumber).length} `}
                 size="medium"
-                color="primary"
+                color="error"
                 sx={{ 
                   fontWeight: 600,
                   px: 1,
                   borderRadius: 2
                 }}
               />
-              <Chip
-                label={`${unitData.filter(p => p.studentNumber).length} คนในตำแหน่ง`}
+               <Chip
+                label={`จาก ${unitData.length} ตำแหน่ง`}
                 size="medium"
                 color="success"
                 sx={{ 
@@ -257,7 +258,13 @@ export default function UnitMembersTable({
                 </TableHead>
 
                 <TableBody>
-                  {unitData.map((pos, index) => {
+                  {[...unitData]
+                    .sort((a, b) => {
+                      const ai = a.pos_index ?? Number.POSITIVE_INFINITY;
+                      const bi = b.pos_index ?? Number.POSITIVE_INFINITY;
+                      return ai - bi;
+                    })
+                    .map((pos, index) => {
                     const isEmpty = !pos.studentId;
                     const canAssign = isEmpty && !!studentData;
                     const studentHasAssignedPosition = !!studentData && !!studentData.assigned;

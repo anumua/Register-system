@@ -8,8 +8,8 @@ export default function SummaryCards({ allSubunits, isMobile }) {
   );
 
   const items = [
-    { label: 'หน่วยย่อยทั้งหมด', value: allSubunits.length, color: 'primary.main' },
-    { label: 'ลงทะเบียนแล้ว', value: totalRegistered, color: 'success.main' },
+    { label: 'หน่วย', value: allSubunits.length, color: 'primary.main' },
+    { label: 'เลือกตำแหน่งแล้ว', value: totalRegistered, color: 'success.main' },
     { label: 'ตำแหน่งว่าง', value: totalVacant, color: 'warning.main' },
   ];
 

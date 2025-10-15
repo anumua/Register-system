@@ -24,10 +24,10 @@ export default function HeaderSection({ router, isMobile }) {
         }}
       >
         <Typography variant={isMobile ? 'h4' : 'h3'} fontWeight="bold">
-          ข้อมูลการลงทะเบียน
+          สถานะการเลือกหน่วย
         </Typography>
         <Typography variant={isMobile ? 'body1' : 'h6'} sx={{ opacity: 0.9 }}>
-          ดูสถานะการลงทะเบียนของแต่ละหน่วย
+          ดูสถานะ / รายละเอียดการเลือกหน่วย
         </Typography>
       </Box>
     </Box>
