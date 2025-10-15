@@ -29,7 +29,7 @@ export function middleware(request) {
 
   // ✅ Public API
   const isPublicApi =
-    pathname === "/api/detail" || pathname.startsWith("/api/detail/") || pathname === "/api/refresh_view";
+    pathname === "/api/detail" || pathname.startsWith("/api/detail/");
 
   // ✅ Internal asset หรือ API auth → ผ่าน
   if (isNextInternal || isAuthApi || isStaticAsset) {

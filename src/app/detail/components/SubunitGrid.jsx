@@ -222,7 +222,7 @@ export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
                 >
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', mb: 1 }}>
                     <Typography variant="body2" color="text.secondary" fontSize={{ xs: '0.8rem', sm: '0.875rem' }}>
-                      ลงทะเบียนแล้ว
+                      เลือกตำแหน่งแล้ว
                     </Typography>
                     <Typography variant="h6" fontWeight="bold" color={`${unitStatus.color}.main`}>
                       {su.current}/{su.capacity}
