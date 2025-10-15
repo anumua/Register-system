@@ -6,7 +6,7 @@ let isRefreshing = false;
 async function refreshView() {
   if (isRefreshing) return;
   isRefreshing = true;
-
+p
   console.log(`[${new Date().toISOString()}] 🔄 Refreshing via API: ${API_URL}`);
   try {
     const res = await fetch(API_URL, { method: 'POST' }); // fetch built-in
