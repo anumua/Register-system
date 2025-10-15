@@ -15,7 +15,7 @@ export async function GET(request) {
     // ถ้ามี ncoId
     if (ncoId) {
       students = await prisma.$queryRaw`
-    SELECT s.*, p.unit_division, p.unit_name, p.pos_name
+    SELECT s.*, p.unit_division, p.unit_name, p.pos_name, p.unit_army
     FROM students s
     LEFT JOIN positions p ON s.nco_id = p.nco_id
     WHERE s.nco_id = ${ncoId}::uuid
@@ -23,7 +23,7 @@ export async function GET(request) {
   `;
     } else if (ncoIndex) {
       students = await prisma.$queryRaw`
-    SELECT s.*, p.unit_division, p.unit_name, p.pos_name
+    SELECT s.*, p.unit_division, p.unit_name, p.pos_name, p.unit_army
     FROM students s
     LEFT JOIN positions p ON s.nco_id = p.nco_id
     WHERE s.nco_index = ${ncoIndex}::int
@@ -31,7 +31,7 @@ export async function GET(request) {
   `;
     } else {
       students = await prisma.$queryRaw`
-    SELECT s.*, p.unit_division, p.unit_name, p.pos_name
+    SELECT s.*, p.unit_division, p.unit_name, p.pos_name, p.unit_army
     FROM students s
     LEFT JOIN positions p ON s.nco_id = p.nco_id
     WHERE s.nco_number = ${ncoNumber}::int
@@ -50,7 +50,7 @@ export async function GET(request) {
       ncoId13: student.nco_id13 || '',
       nco_index: student.nco_index || '',
       nco_king: student.nco_king || '',
-      remark: `${student.unit_division} ${student.unit_name} ตำแหน่ง ${student.pos_name}` || '',
+      remark: `${student.pos_name}  ${student.unit_name}   (${student.unit_division})  (${student.unit_army})` || '',
       king: student.nco_king || ''
     }));
 

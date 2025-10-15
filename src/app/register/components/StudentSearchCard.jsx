@@ -474,7 +474,7 @@ export default function StudentSearchCard({
 
                   {studentData.remark && (
                     <Chip
-                      label={`เลือก: ${studentData.remark}`}
+                      label={`${studentData.remark}`}
                       color="primary"
                       variant="filled"
                       size="medium"
