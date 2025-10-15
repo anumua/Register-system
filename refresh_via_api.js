@@ -1,5 +1,5 @@
 // refresh_via_api.js
-const API_URL = process.env.NEXTAUTH_URL + '/api/refresh_view';
+const API_URL ='https://ncounit.inf-school.com/api/refresh_view';
 
 let isRefreshing = false;
 
