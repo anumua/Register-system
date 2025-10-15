@@ -1,12 +1,11 @@
-// refresh_via_api.js
-import fetch from 'node-fetch';
+const fetch = require('node-fetch'); // แทน import
 
 const API_URL = process.env.DOMAIN_NAME + '/api/refresh_view';
 
-let isRefreshing = false; // ป้องกันเรียกซ้ำถ้า API ช้า
+let isRefreshing = false;
 
 async function refreshView() {
-  if (isRefreshing) return; // 🔒 ป้องกันเรียกซ้ำ
+  if (isRefreshing) return;
   isRefreshing = true;
 
   console.log(`[${new Date().toISOString()}] 🔄 Refreshing via API: ${API_URL}`);
@@ -23,8 +22,5 @@ async function refreshView() {
   }
 }
 
-// เรียกครั้งแรกทันที
 refreshView();
-
-// ตั้ง loop ทุก 3 วินาที
 setInterval(refreshView, 3000);
