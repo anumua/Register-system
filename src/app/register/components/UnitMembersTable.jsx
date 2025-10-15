@@ -18,9 +18,10 @@ import {
   Autocomplete,
   TextField,
   Chip,
-  Divider
+  Divider,
+  alpha
 } from '@mui/material';
-import { Delete as DeleteIcon, Add as AddIcon, Person as PersonIcon, Badge as BadgeIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Add as AddIcon, Person as PersonIcon, Badge as BadgeIcon, SearchRounded as SearchIcon } from '@mui/icons-material';
 
 export default function UnitMembersTable({
   subunits = [],
@@ -34,48 +35,60 @@ export default function UnitMembersTable({
 }) {
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
-        <CircularProgress size={48} thickness={4} />
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: 400,
+        flexDirection: 'column',
+        gap: 2
+      }}>
+        <CircularProgress size={48} thickness={4} sx={{ color: 'primary.main' }} />
+        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+          กำลังโหลดข้อมูล...
+        </Typography>
       </Box>
     );
   }
 
   return (
-    <Card 
+    <Card
       sx={{
-        boxShadow: '0 8px 32px rgba(0,0,0,0.1)', 
-      height: '100%', 
-      display: 'flex', 
-      flexDirection: 'column', 
-      width: '100%',
-      borderRadius: 3,
-      border: '1px solid rgba(25, 118, 210, 0.1)',
-      transition: 'all 0.3s ease',
-      '&:hover': {
-        boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
-        transform: 'translateY(-2px)'
-      }}}
+        boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        borderRadius: 4,
+        border: '1px solid',
+        borderColor: 'divider',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        background: 'linear-gradient(to bottom, #ffffff, #fafafa)',
+        overflow: 'hidden'
+      }}
     >
-      <CardContent sx={{ p: 3 }}>
+      <CardContent sx={{ p: 4 }}>
         {/* Header Section */}
-        <Box sx={{ mb: 3 }}>
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              fontWeight: 600,
-              color: 'primary.main',
-              mb: 0.5,
-              letterSpacing: 0.3
-            }}
-          >
-            จัดการตำแหน่งในหน่วยงาน
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            เลือกหน่วยเพื่อดูและจัดการตำแหน่งในหน่วยงาน
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+            <BadgeIcon sx={{ fontSize: 28, color: 'primary.main' }} />
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 700,
+                color: 'text.primary',
+                letterSpacing: -0.5
+              }}
+            >
+              จัดการตำแหน่งในหน่วยงาน
+            </Typography>
+          </Box>
+          <Typography variant="body2" color="text.secondary" sx={{ ml: 5, fontWeight: 400 }}>
+            เลือกหน่วยเพื่อดูและจัดการตำแหน่งในหน่วยงานของคุณ
           </Typography>
         </Box>
 
-        <Divider sx={{ mb: 3 }} />
+        <Divider sx={{ mb: 4, opacity: 0.6 }} />
 
         {/* Search Section */}
         <Autocomplete
@@ -84,82 +97,160 @@ export default function UnitMembersTable({
           value={selectedUnit}
           onChange={(e, val) => onSelectSubunit && onSelectSubunit(val)}
           renderInput={(params) => (
-            <TextField 
-              {...params} 
-              label="ค้นหาหน่วยย่อย" 
+            <TextField
+              {...params}
+              label="ค้นหาหน่วยย่อย"
               placeholder="กรุณาเลือกหน่วยย่อย..."
               variant="outlined"
+              InputProps={{
+                ...params.InputProps,
+                startAdornment: (
+                  <>
+                    <SearchIcon sx={{ color: 'text.secondary', ml: 1, mr: -0.5 }} />
+                    {params.InputProps.startAdornment}
+                  </>
+                )
+              }}
             />
           )}
-          sx={{ mb: 3 }}
+          sx={{ 
+            mb: 4,
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 2,
+              backgroundColor: 'background.paper',
+              '&:hover': {
+                backgroundColor: alpha('#1976d2', 0.02)
+              },
+              '&.Mui-focused': {
+                backgroundColor: 'background.paper'
+              }
+            }
+          }}
           ListboxProps={{
             sx: {
               '& .MuiAutocomplete-option': {
                 fontSize: '0.95rem',
-                py: 1.5
+                py: 1.5,
+                borderRadius: 1,
+                mx: 1,
+                '&:hover': {
+                  backgroundColor: alpha('#1976d2', 0.08)
+                },
+                '&.Mui-focused': {
+                  backgroundColor: alpha('#1976d2', 0.12)
+                }
               }
             }
           }}
         />
 
         {!selectedUnit ? (
-          <Paper 
+          <Paper
             elevation={0}
-            sx={{ 
-              p: 6, 
+            sx={{
+              p: 8,
               textAlign: 'center',
-              backgroundColor: 'grey.50',
+              backgroundColor: alpha('#1976d2', 0.02),
               border: '2px dashed',
-              borderColor: 'grey.300',
-              borderRadius: 2
+              borderColor: alpha('#1976d2', 0.2),
+              borderRadius: 3,
+              transition: 'all 0.3s ease'
             }}
           >
-            <BadgeIcon sx={{ fontSize: 64, color: 'grey.400', mb: 2 }} />
-            <Typography variant="h6" color="text.secondary" gutterBottom sx={{ fontWeight: 500 }}>
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                borderRadius: '50%',
+                backgroundColor: alpha('#1976d2', 0.1),
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto',
+                mb: 3
+              }}
+            >
+              <BadgeIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+            </Box>
+            <Typography variant="h6" color="text.primary" gutterBottom sx={{ fontWeight: 600, mb: 1 }}>
               กรุณาเลือกหน่วยย่อย
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              เลือกหน่วยย่อยจากช่องค้นหาด้านบน เพื่อแสดงรายการตำแหน่งและข้อมูลสมาชิก
+            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400, mx: 'auto' }}>
+              เลือกหน่วยย่อยจากช่องค้นหาด้านบน เพื่อแสดงรายการตำแหน่งและข้อมูลสมาชิกในหน่วยงาน
             </Typography>
           </Paper>
         ) : (
           <>
             {/* Unit Info Header */}
-            <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
+            <Box 
+              sx={{ 
+                mb: 3, 
+                p: 2.5,
+                backgroundColor: alpha('#1976d2', 0.04),
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: alpha('#1976d2', 0.1),
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                flexWrap: 'wrap'
+              }}
+            >
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary', flex: 1 }}>
                 หน่วยย่อย: {selectedUnit.name}
               </Typography>
-              <Chip 
-                label={`${unitData.length} ตำแหน่ง`} 
-                size="small" 
+              <Chip
+                label={`${unitData.length} ตำแหน่ง`}
+                size="medium"
                 color="primary"
-                variant="outlined"
+                sx={{ 
+                  fontWeight: 600,
+                  px: 1,
+                  borderRadius: 2
+                }}
               />
-              <Chip 
-                label={`${unitData.filter(p => p.studentNumber).length} คน`} 
-                size="small" 
+              <Chip
+                label={`${unitData.filter(p => p.studentNumber).length} คนในตำแหน่ง`}
+                size="medium"
                 color="success"
-                variant="outlined"
+                sx={{ 
+                  fontWeight: 600,
+                  px: 1,
+                  borderRadius: 2
+                }}
               />
             </Box>
 
-            <TableContainer 
-              component={Paper} 
+            <TableContainer
+              component={Paper}
               elevation={0}
-              sx={{ 
+              sx={{
                 border: '1px solid',
                 borderColor: 'divider',
-                borderRadius: 1
+                borderRadius: 2,
+                overflow: 'hidden'
               }}
             >
               <Table sx={{ minWidth: 650 }}>
                 <TableHead>
-                  <TableRow sx={{ backgroundColor: 'primary.main' }}>
-                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>ลำดับตำแหน่ง</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>ชื่อตำแหน่ง</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>รหัสนักเรียน</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>ชื่อ-นามสกุล</TableCell>
-                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2, textAlign: 'center' }}>
+                  <TableRow 
+                    sx={{ 
+                      background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)'
+                    }}
+                  >
+                    <TableCell sx={{ fontWeight: 700, color: 'white', py: 2.5, fontSize: '0.95rem' }}>
+                      ลำดับ
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 700, color: 'white', py: 2.5, fontSize: '0.95rem' }}>
+                      ชื่อตำแหน่ง
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 700, color: 'white', py: 2.5, fontSize: '0.95rem' }}>
+                      รหัสนักเรียน
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 700, color: 'white', py: 2.5, fontSize: '0.95rem' }}>
+                      ชื่อ-นามสกุล
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 700, color: 'white', py: 2.5, fontSize: '0.95rem', textAlign: 'center' }}>
                       การดำเนินการ
                     </TableCell>
                   </TableRow>
@@ -170,8 +261,7 @@ export default function UnitMembersTable({
                     const isEmpty = !pos.studentId;
                     const canAssign = isEmpty && !!studentData;
                     const studentHasAssignedPosition = !!studentData && !!studentData.assigned;
-
-                    console.log(pos)
+                    const paddedId = String(pos.studentId).padStart(3, '0');
 
                     return (
                       <TableRow
@@ -179,90 +269,126 @@ export default function UnitMembersTable({
                         hover={canAssign}
                         sx={{
                           cursor: canAssign ? 'pointer' : 'default',
-                          backgroundColor: index % 2 === 0 ? 'grey.50' : 'white',
-                          '&:hover': canAssign ? { 
-                            backgroundColor: 'success.50',
-                            transition: 'background-color 0.2s'
+                          backgroundColor: index % 2 === 0 ? 'background.paper' : alpha('#000', 0.02),
+                          transition: 'all 0.2s ease',
+                          '&:hover': canAssign ? {
+                            backgroundColor: alpha('#4caf50', 0.08),
+                            transform: 'scale(1.002)'
                           } : {},
                         }}
                       >
-                        <TableCell sx={{ py: 2.5, fontFamily: 'monospace', fontWeight: 500 }}>
+                        <TableCell sx={{ py: 3, fontFamily: 'monospace', fontWeight: 600, color: 'primary.main', fontSize: '1rem' }}>
                           {pos.pos_index || '—'}
                         </TableCell>
-                        
-                        <TableCell sx={{ py: 2.5, fontWeight:1000 }}>
-                          {pos.positionName}
+
+                        <TableCell sx={{ py: 3 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                            {pos.positionName}
+                          </Typography>
                         </TableCell>
-                        
-                        <TableCell sx={{ py: 2.5, fontFamily: 'monospace' }}>
+
+                        <TableCell sx={{ py: 3 }}>
                           {pos.studentNumber ? (
-                            <Chip 
-                              label={pos.studentNumber} 
+                            <Chip
+                              label={pos.studentNumber}
                               size="small"
-                              sx={{ fontFamily: 'monospace' }}
+                              sx={{ 
+                                fontFamily: 'monospace',
+                                fontWeight: 600,
+                                backgroundColor: alpha('#1976d2', 0.1),
+                                color: 'primary.main',
+                                borderRadius: 1.5
+                              }}
                             />
                           ) : (
-                            <Typography variant="body2" color="text.disabled">
-                              —
+                            <Typography variant="body2" color="text.disabled" sx={{ fontWeight: 500 }}>
+                              ไม่มีข้อมูล
                             </Typography>
                           )}
                         </TableCell>
-                        
-                        <TableCell sx={{ py: 2.5 }}>
+
+                        <TableCell sx={{ py: 3 }}>
                           {(pos.studentId || pos.name) ? (
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                              <Avatar 
-                                sx={{ 
-                                  width: 36, 
-                                  height: 36,
-                                  backgroundColor: 'primary.main'
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                              <Avatar
+                                src={
+                                  process.env.NEXT_PUBLIC_PICTURE_NCO
+                                    ? `/${process.env.NEXT_PUBLIC_PICTURE_NCO}/${paddedId}.jpg`
+                                    : undefined
+                                }
+                                sx={{
+                                  width: 48,
+                                  height: 48,
+                                  border: '3px solid',
+                                  borderColor: 'primary.main',
+                                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                  bgcolor: alpha('#1976d2', 0.1),
+                                  color: 'primary.main',
+                                  transition: 'all 0.3s ease',
+                                  '&:hover': {
+                                    transform: 'scale(1.15)',
+                                    boxShadow: '0 6px 20px rgba(25, 118, 210, 0.3)'
+                                  },
+                                  '& img': {
+                                    objectFit: 'cover',
+                                    objectPosition: 'top'
+                                  }
                                 }}
                               >
-                                <PersonIcon sx={{ fontSize: 20 }} />
+                                <PersonIcon sx={{ fontSize: 32 }} />
                               </Avatar>
-                              <Typography variant="body2" sx={{ fontWeight: 1000 }}>
-                                นนส.{pos.name  || 'ไม่ระบุ'}
+                              <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                                นนส. {pos.name || 'ไม่ระบุ'}
                               </Typography>
                             </Box>
                           ) : (
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                             <Typography variant="body2" color="text.disabled">
-                                <typography variant="body2" color="text.disabled">—</typography>
-                              </Typography>
-                            </Box>
+                            <Typography variant="body2" color="text.disabled" sx={{ fontWeight: 500 }}>
+                              ไม่มีข้อมูล
+                            </Typography>
                           )}
                         </TableCell>
-                        
-                        <TableCell sx={{ py: 2.5, textAlign: 'center' }}>
+
+                        <TableCell sx={{ py: 3, textAlign: 'center' }}>
                           {pos.studentNumber ? (
-                            // กรณีมีนักเรียนอยู่ในตำแหน่งแล้ว
-                            <Chip 
-                              label="ไม่ว่าง" 
-                              size="small" 
-                              color="error"
-                              variant="filled"
-                              sx={{ fontWeight: 500 }}
+                            <Chip
+                              label="ไม่ว่าง"
+                              size="small"
+                              sx={{
+                                fontWeight: 600,
+                                backgroundColor: alpha('#f44336', 0.1),
+                                color: 'error.main',
+                                borderRadius: 1.5,
+                                border: '1px solid',
+                                borderColor: alpha('#f44336', 0.3)
+                              }}
                             />
                           ) : !studentData ? (
-                            // กรณียังไม่มีการค้นหานักเรียน
-                            <Chip 
-                              label="ว่าง" 
-                              size="small" 
-                              color="success"
-                              variant="filled"
-                              sx={{ fontWeight: 500 }}
+                            <Chip
+                              label="ว่าง"
+                              size="small"
+                              sx={{
+                                fontWeight: 600,
+                                backgroundColor: alpha('#4caf50', 0.1),
+                                color: 'success.main',
+                                borderRadius: 1.5,
+                                border: '1px solid',
+                                borderColor: alpha('#4caf50', 0.3)
+                              }}
                             />
                           ) : studentHasAssignedPosition ? (
-                            // กรณีค้นหานักเรียนแล้ว แต่นักเรียนมีตำแหน่งแล้ว
-                            <Chip 
-                              label="ว่าง" 
-                              size="small" 
-                              color="success"
-                              variant="filled"
-                              sx={{ fontWeight: 500 }}
+                            <Chip
+                              label="ว่าง"
+                              size="small"
+                              sx={{
+                                fontWeight: 600,
+                                backgroundColor: alpha('#4caf50', 0.1),
+                                color: 'success.main',
+                                borderRadius: 1.5,
+                                border: '1px solid',
+                                borderColor: alpha('#4caf50', 0.3)
+                              }}
                             />
                           ) : (
-                            // กรณีว่างและนักเรียนที่เลือกยังไม่มีตำแหน่ง => แสดงปุ่มเพิ่ม
                             <Button
                               variant="contained"
                               color="success"
@@ -274,15 +400,20 @@ export default function UnitMembersTable({
                               }}
                               sx={{
                                 textTransform: 'none',
-                                fontWeight: 500,
+                                fontWeight: 600,
                                 px: 3,
-                                boxShadow: 'none',
+                                py: 1,
+                                borderRadius: 2,
+                                boxShadow: '0 2px 8px rgba(76, 175, 80, 0.3)',
+                                background: 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)',
+                                transition: 'all 0.3s ease',
                                 '&:hover': {
-                                  boxShadow: 1
+                                  boxShadow: '0 4px 16px rgba(76, 175, 80, 0.4)',
+                                  transform: 'translateY(-2px)'
                                 }
                               }}
                             >
-                              เพิ่ม
+                              เพิ่มเข้าตำแหน่ง
                             </Button>
                           )}
                         </TableCell>
@@ -294,8 +425,23 @@ export default function UnitMembersTable({
             </TableContainer>
 
             {unitData.length === 0 && (
-              <Box sx={{ textAlign: 'center', py: 4 }}>
-                <Typography variant="body2" color="text.secondary">
+              <Box sx={{ textAlign: 'center', py: 6 }}>
+                <Box
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: '50%',
+                    backgroundColor: alpha('#9e9e9e', 0.1),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto',
+                    mb: 2
+                  }}
+                >
+                  <BadgeIcon sx={{ fontSize: 32, color: 'text.disabled' }} />
+                </Box>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
                   ไม่พบข้อมูลตำแหน่งในหน่วยย่อยนี้
                 </Typography>
               </Box>

@@ -198,8 +198,8 @@ export default function RegisterPage() {
       setSuccess(
         `เพิ่มนนส. ${studentData.name} เข้า${selectedSubunit?.name || ''} ตำแหน่ง${position.positionName} สำเร็จ`
       );
-      setStudentId('');
-      setStudentData(null);
+      // setStudentId('');
+      // setStudentData(null);
       setSelectedSubunit(null);
       // หากต้องการล้างการเลือกนักเรียนหลังเพิ่ม ให้ uncomment บรรทัดถัดไป
       // setStudentData(null);
