@@ -272,7 +272,7 @@ export default function StudentSearchCard({
               value={studentId}
               onChange={(e) => setStudentId((e.target.value || '').replace(/\D/g, ''))}
               onKeyPress={handleKeyPress}
-              placeholder="กรอกหมายเลขสอบ"
+              placeholder="กรอกหมายเลข"
               variant="outlined"
               autoComplete="off"
               InputProps={{
