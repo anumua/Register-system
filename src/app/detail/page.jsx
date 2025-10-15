@@ -40,9 +40,9 @@ export default function DetailPage() {
   });
 
   const allSubunits = (units || []).map(u => ({
-    unitName: u.unit_name,
-    subunitName: u.subunit_name,
-    code: u.unit_code,
+    unitName: u.unit_division,
+    subunitName: u.unit_name,
+    code: u.pos_index,
     current: u.registered_count,
     capacity: u.total,
     positions: u.positions || [],

@@ -9,7 +9,7 @@ export async function GET() {
     select a.*, concat(b.first_name,' ', b.last_name) as student_name, b.nco_number
     from positions a
     left join students b on a.nco_id = b.nco_id
-    order by unit_name asc ,  subunit_name asc ,  pos_pronum asc
+    order by unit_division asc ,  unit_name asc ,  pos_pronum asc
     `;
   
     // Group into units and subunits, compute vacancy by absence of nco_id
@@ -26,10 +26,10 @@ export async function GET() {
       }
       const unit = unitMap.get(unitKey);
 
-      const subKey = row.subunit_name || "-";
+      const subKey = row.unit_name || "-";
       if (!unit.subunits.has(subKey)) {
         unit.subunits.set(subKey, {
-          subunitName: row.subunit_name || "ไม่ระบุ",
+          subunitName: row.unit_name || "ไม่ระบุ",
           positions: [],
         });
       }
@@ -37,7 +37,7 @@ export async function GET() {
 
       sub.positions.push({
         posId: row.pos_id,
-        code: row.pos_code || null,
+        pos_index: row.pos_index || null,
         name: row.pos_name || null,
         order: row.pos_pronum ? Number(row.pos_pronum) : null,
         remark: row.pos_mark || null,

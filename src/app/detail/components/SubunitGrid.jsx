@@ -1,6 +1,29 @@
-import { Box, Card, CardContent, Typography, Avatar, Chip, Divider, LinearProgress, Stack, Button, useTheme, alpha, TextField, InputAdornment } from '@mui/material';
-import { Groups as GroupsIcon, CheckCircle, Info, Warning, ArrowForward, Search, Clear } from '@mui/icons-material';
-import { useState } from 'react';
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Chip,
+  Divider,
+  LinearProgress,
+  Stack,
+  Button,
+  useTheme,
+  alpha,
+  TextField,
+  InputAdornment
+} from '@mui/material';
+import {
+  Groups as GroupsIcon,
+  CheckCircle,
+  Info,
+  Warning,
+  ArrowForward,
+  Search,
+  Clear
+} from '@mui/icons-material';
+import { useState, useEffect, useMemo } from 'react';
 
 const getUnitStatus = (current, capacity) => {
   const percentage = (current / capacity) * 100;
@@ -11,17 +34,27 @@ const getUnitStatus = (current, capacity) => {
 
 export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
   const theme = useTheme();
+
+  // แยก state สำหรับ input กับ searchTerm จริง (debounce)
+  const [searchInput, setSearchInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Filter subunits based on search term
-  const filteredSubunits = allSubunits.filter((su) => {
-    if (!searchTerm) return true;
+  // ⏳ debounce: อัปเดต searchTerm หลังหยุดพิมพ์ 300ms
+  useEffect(() => {
+    const handler = setTimeout(() => setSearchTerm(searchInput), 300);
+    return () => clearTimeout(handler);
+  }, [searchInput]);
+
+  // 🧠 useMemo: กรองข้อมูลเฉพาะเมื่อ searchTerm เปลี่ยนจริง ๆ
+  const filteredSubunits = useMemo(() => {
     const search = searchTerm.toLowerCase();
-    return (
-      su.subunitName?.toLowerCase().includes(search) ||
-      su.unitName?.toLowerCase().includes(search)
+    if (!search) return allSubunits;
+    return allSubunits.filter(
+      (su) =>
+        su.subunitName?.toLowerCase().includes(search) ||
+        su.unitName?.toLowerCase().includes(search)
     );
-  });
+  }, [searchTerm, allSubunits]);
 
   return (
     <Box>
@@ -30,27 +63,30 @@ export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
         <TextField
           fullWidth
           placeholder="ค้นหาหน่วย..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           variant="outlined"
-          size={isMobile ? "small" : "medium"}
+          size={isMobile ? 'small' : 'medium'}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <Search sx={{ color: 'text.secondary' }} />
               </InputAdornment>
             ),
-            endAdornment: searchTerm && (
+            endAdornment: searchInput && (
               <InputAdornment position="end">
                 <Button
                   size="small"
-                  onClick={() => setSearchTerm('')}
+                  onClick={() => {
+                    setSearchInput('');
+                    setSearchTerm('');
+                  }}
                   sx={{ minWidth: 'auto', p: 0.5 }}
                 >
                   <Clear sx={{ fontSize: 20 }} />
                 </Button>
               </InputAdornment>
-            ),
+            )
           }}
           sx={{
             '& .MuiOutlinedInput-root': {
@@ -59,19 +95,20 @@ export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
               transition: 'all 0.3s ease',
               '&:hover': {
                 bgcolor: theme.palette.background.paper,
-                boxShadow: 2,
+                boxShadow: 2
               },
               '&.Mui-focused': {
                 bgcolor: theme.palette.background.paper,
-                boxShadow: 3,
-              },
-            },
+                boxShadow: 3
+              }
+            }
           }}
         />
+
         {searchTerm && (
-          <Typography 
-            variant="caption" 
-            color="text.secondary" 
+          <Typography
+            variant="caption"
+            color="text.secondary"
             sx={{ mt: 1, display: 'block' }}
           >
             พบ {filteredSubunits.length} จาก {allSubunits.length} หน่วย

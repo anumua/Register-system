@@ -7,7 +7,7 @@ export async function GET() {
 
         const rows = await prisma.$queryRaw`
         SELECT * FROM positions_summary
-        ORDER BY unit_name, subunit_name
+        ORDER BY unit_army,unit_division, unit_name
     `;
 
         const data = rows.map(row => ({

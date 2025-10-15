@@ -10,17 +10,17 @@ export async function GET(request, { params }) {
     // 🔹 Query ตัวอย่าง (join + filter)
     const rows = await prisma.$queryRaw`
       SELECT 
+        a.unit_division,
         a.unit_name,
-        a.subunit_name,
-        a.pos_code,
+        a.pos_index,
         a.pos_name,
         COALESCE(CONCAT(b.first_name, ' ', b.last_name), '-') AS student_name,
         b.nco_number
       FROM positions a
       LEFT JOIN students b ON a.nco_id = b.nco_id
-      WHERE a.unit_name = ${unit_name}
-      AND a.subunit_name = ${subunit_name}
-      ORDER BY a.pos_code;
+      WHERE a.unit_division = ${unit_name}
+      AND a.unit_name = ${subunit_name}
+      ORDER BY a.pos_index ASC;
     `;
 
     return new Response(JSON.stringify({ positions: rows }), { status: 200 });

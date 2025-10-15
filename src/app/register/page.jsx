@@ -147,10 +147,10 @@ export default function RegisterPage() {
       joinDate: pos.timeSelected
         ? new Date(pos.timeSelected).toLocaleDateString('th-TH')
         : '',
-      subunitId: subunit.id,
       subunitName: subunit.name,
       positionCode: pos.code,
-      positionName: pos.name
+      positionName: pos.name,
+      pos_index: pos.pos_index || null,
     }));
 
     setUnitData(members);
@@ -196,7 +196,7 @@ export default function RegisterPage() {
       setStudentData(prev => prev ? { ...prev, assigned: true } : prev);
 
       setSuccess(
-        `เพิ่ม${studentData.name} เข้า${selectedSubunit?.name || ''} ตำแหน่ง${position.positionName} สำเร็จ`
+        `เพิ่มนนส. ${studentData.name} เข้า${selectedSubunit?.name || ''} ตำแหน่ง${position.positionName} สำเร็จ`
       );
       setStudentId('');
       setStudentData(null);

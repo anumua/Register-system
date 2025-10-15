@@ -155,7 +155,7 @@ export default function UnitMembersTable({
               <Table sx={{ minWidth: 650 }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: 'primary.main' }}>
-                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>รหัสตำแหน่ง</TableCell>
+                    <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>ลำดับตำแหน่ง</TableCell>
                     <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>ชื่อตำแหน่ง</TableCell>
                     <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>รหัสนักเรียน</TableCell>
                     <TableCell sx={{ fontWeight: 600, color: 'white', py: 2 }}>ชื่อ-นามสกุล</TableCell>
@@ -171,6 +171,8 @@ export default function UnitMembersTable({
                     const canAssign = isEmpty && !!studentData;
                     const studentHasAssignedPosition = !!studentData && !!studentData.assigned;
 
+                    console.log(pos)
+
                     return (
                       <TableRow
                         key={pos.id}
@@ -185,7 +187,7 @@ export default function UnitMembersTable({
                         }}
                       >
                         <TableCell sx={{ py: 2.5, fontFamily: 'monospace', fontWeight: 500 }}>
-                          {pos.positionCode}
+                          {pos.pos_index || '—'}
                         </TableCell>
                         
                         <TableCell sx={{ py: 2.5, fontWeight:1000 }}>

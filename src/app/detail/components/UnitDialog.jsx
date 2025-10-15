@@ -57,7 +57,10 @@ export default function UnitDialog({ open, onClose, selectedUnit, isMobile, isSm
               <Typography variant={isMobile ? "subtitle1" : "h6"} fontWeight="bold" color="primary.main">
                 {selectedUnit.name}
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2, mt: 1, flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+                <Typography variant="body2" color="text.primary" sx={{ fontWeight: 'bold' }}>
+                  หน่วย: {selectedUnit.subunit_name} ({selectedUnit.unit_name} )
+                </Typography>
                 <Chip 
                   icon={<Badge />}
                   label={`กำลังพล ${currentCount}/${positions.length} คน`}
@@ -108,10 +111,9 @@ export default function UnitDialog({ open, onClose, selectedUnit, isMobile, isSm
             <Table stickyHeader size={isMobile ? "small" : "medium"}>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ bgcolor: 'primary.main', color: 'white', fontWeight: 'bold', py: 2 }}>ตำแหน่ง</TableCell>
-                  {!isMobile && <TableCell sx={{ bgcolor: 'primary.main', color: 'white', fontWeight: 'bold', py: 2 }}>เลขที่ตำแหน่ง</TableCell>}
-                  <TableCell sx={{ bgcolor: 'primary.main', color: 'white', fontWeight: 'bold', py: 2 }}>ชื่อ-นามสกุล</TableCell>
-                  <TableCell align="center" sx={{ bgcolor: 'primary.main', color: 'white', fontWeight: 'bold', py: 2 }}>สถานะ</TableCell>
+                   {!isMobile && <TableCell sx={{ bgcolor: 'primary.main', color: 'white', fontWeight: 'bold', py: 2 }}>เลขที่ตำแหน่ง</TableCell>}
+                  <TableCell sx={{ bgcolor: 'primary.main', color: 'white', fontWeight: 'bold', py: 2 }}>ตำแหน่ง</TableCell>                
+                  <TableCell sx={{ bgcolor: 'primary.main', color: 'white', fontWeight: 'bold', py: 2 }}>ชื่อ-นามสกุล</TableCell>   
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -124,13 +126,16 @@ export default function UnitDialog({ open, onClose, selectedUnit, isMobile, isSm
                       '&:hover': { bgcolor: 'action.hover' } 
                     }}
                   >
+                    {!isMobile && <TableCell sx={{ py: 2 }}>{row.pos_index}</TableCell>}
                     <TableCell sx={{ py: isMobile ? 1.5 : 2 }}>{row.pos_name}</TableCell>
-                    {!isMobile && <TableCell sx={{ py: 2 }}>{row.pos_code}</TableCell>}
                     <TableCell sx={{ py: isMobile ? 1.5 : 2 }}>
                       {row.nco_number === null ? (
-                        <Typography variant="body2" color="text.secondary" fontStyle="italic">
-                          - ไม่มีผู้ดำรงตำแหน่ง -
-                        </Typography>
+                        <Chip 
+                        label={'ว่าง'} 
+                        color={'success'} 
+                        size="small" 
+                        sx={{ fontWeight: 'bold', minWidth: 70 }} 
+                      />
                       ) : (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                           <Avatar sx={{ width: isMobile ? 28 : 32, height: isMobile ? 28 : 32, bgcolor: 'primary.light' }}>
@@ -140,14 +145,7 @@ export default function UnitDialog({ open, onClose, selectedUnit, isMobile, isSm
                         </Box>
                       )}
                     </TableCell>
-                    <TableCell align="center" sx={{ py: isMobile ? 1.5 : 2 }}>
-                      <Chip 
-                        label={row.nco_number ? 'เลือกแล้ว' : 'ว่าง'} 
-                        color={row.nco_number ? 'default' : 'success'} 
-                        size="small" 
-                        sx={{ fontWeight: 'bold', minWidth: 70 }} 
-                      />
-                    </TableCell>
+                   
                   </TableRow>
                 ))}
               </TableBody>
