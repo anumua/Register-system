@@ -260,7 +260,7 @@ export default function RegisterPage() {
       setStudentData(prev => prev ? { ...prev, assigned: true } : prev);
 
       setSuccess(
-        `นนส. ${studentData.name} เลือกตำแหน่ง${position.positionName} ${selectedSubunit?.name || ''}  สำเร็จแล้ว`
+        `นนส. ${studentData.name} เลือกตำแหน่ง${position.positionName}  ${selectedSubunit?.name || ''}  สำเร็จแล้ว`
       );
       // setStudentId('');
       // setStudentData(null);
