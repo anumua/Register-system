@@ -26,10 +26,13 @@ import {
 
 export default function StudentSearchCard({
   studentId,
+  studentIndex,
+  setStudentIndex,
   setStudentId,
   studentData,
   searchLoading,
   onSearch,
+  onSearchIndex,
   onReset
 }) {
   console.log(studentData);
@@ -38,9 +41,19 @@ export default function StudentSearchCard({
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && studentId && !searchLoading) {
+      // Search by studentId and clear studentIndex
       onSearch(studentId);
+      setStudentIndex('');
     }
   };
+  const handleKeyPressIndex = (e) => {
+    if (e.key === 'Enter' && studentIndex && !searchLoading) {
+      // Search by studentIndex and clear studentId
+      onSearchIndex(studentIndex);
+      setStudentId('');
+    }
+  };
+
 
   const handlePrevious = () => {
     const currentId = parseInt(studentId) || 0;
@@ -58,8 +71,24 @@ export default function StudentSearchCard({
     onSearch(newId);
   };
 
+  const handlePreviousIndex = () => {
+    const currentIndex = parseInt(studentIndex) || 0;
+    if (currentIndex > 1) {
+      const newIndex = String(currentIndex - 1);
+      setStudentIndex(newIndex);
+      onSearchIndex(newIndex);
+    }
+  };
+
+  const handleNextIndex = () => {
+    const currentIndex = parseInt(studentIndex) || 0;
+    const newIndex = String(currentIndex + 1);
+    setStudentIndex(newIndex);
+    onSearchIndex(newIndex);
+  };
+
   return (
-    <Card 
+    <Card
       elevation={0}
       sx={{
         boxShadow: '0 8px 40px rgba(25, 118, 210, 0.08)',
@@ -112,164 +141,209 @@ export default function StudentSearchCard({
           </Box>
         </Box>
 
+
+
+
+
+
         {/* Search Box */}
         <Box sx={{ display: 'flex', gap: 2, mb: 4 }}>
-          <Button
-            variant="outlined"
-            onClick={handlePrevious}
-            disabled={!studentId || parseInt(studentId) <= 1 || searchLoading}
-            sx={{
-              minWidth: 56,
-              height: 56,
-              borderRadius: 3,
-              borderWidth: 2,
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                borderWidth: 2,
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
-                bgcolor: 'primary.50'
-              },
-              '&:disabled': {
-                borderWidth: 2
-              }
-            }}
-          >
-            <ArrowBackIcon />
-          </Button>
-
-          <TextField
-            fullWidth
-            label="เลขประจำตัวนักเรียนนายสิบ"
-            value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="กรอกเลขประจำตัว เช่น 12345 (กด Enter เพื่อค้นหา)"
-            variant="outlined"
-            autoComplete="off"
-            InputProps={{
-              startAdornment: (
-                <SchoolIcon sx={{ color: 'text.secondary', mr: 1 }} />
-              ),
-            }}
-            sx={{
-              '& .MuiOutlinedInput-root': {
+          {/* number se */}
+          <Grid sx={{ display: 'flex', flexxDirection: 'row', alignItems: 'center', gap: 2, flexGrow: 1 }}>
+            <Button
+              variant="outlined"
+              onClick={handlePreviousIndex}
+              disabled={!studentIndex || parseInt(studentIndex) <= 1 || searchLoading}
+              sx={{
+                minWidth: 56,
+                height: 56,
                 borderRadius: 3,
-                bgcolor: 'white',
+                borderWidth: 2,
                 transition: 'all 0.3s ease',
-                '& fieldset': {
+                '&:hover': {
                   borderWidth: 2,
-                  borderColor: 'divider'
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
+                  bgcolor: 'primary.50'
                 },
-                '&:hover fieldset': {
-                  borderColor: 'primary.main',
-                },
-                '&.Mui-focused': {
+                '&:disabled': {
+                  borderWidth: 2
+                }
+              }}
+            >
+              <ArrowBackIcon />
+            </Button>
+
+            <TextField
+              fullWidth
+              label="ลำดับที่สอบได้"
+              value={studentIndex}
+              onChange={(e) => setStudentIndex((e.target.value || '').replace(/\D/g, ''))}
+              onKeyPress={handleKeyPressIndex}
+              placeholder="กรอกลำดับสอบได้"
+              variant="outlined"
+              autoComplete="off"
+              InputProps={{
+                startAdornment: (
+                  <SchoolIcon sx={{ color: 'text.secondary', mr: 1 }} />
+                ),
+              }}
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  bgcolor: 'white',
+                  transition: 'all 0.3s ease',
                   '& fieldset': {
-                    borderWidth: 2.5,
+                    borderWidth: 2,
+                    borderColor: 'divider'
+                  },
+                  '&:hover fieldset': {
                     borderColor: 'primary.main',
                   },
-                  boxShadow: '0 0 0 4px rgba(25, 118, 210, 0.1)'
-                }
-              },
-              '& .MuiInputLabel-root': {
-                fontWeight: 500
-              }
-            }}
-          />
-
-          <Button
-            variant="outlined"
-            onClick={handleNext}
-            disabled={!studentId || searchLoading}
-            sx={{
-              minWidth: 56,
-              height: 56,
-              borderRadius: 3,
-              borderWidth: 2,
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                borderWidth: 2,
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
-                bgcolor: 'primary.50'
-              },
-              '&:disabled': {
-                borderWidth: 2
-              }
-            }}
-          >
-            <ArrowForwardIcon />
-          </Button>
-          
-          <Button
-            variant="contained"
-            onClick={() => onSearch(studentId)}
-            disabled={!studentId || searchLoading}
-            sx={{
-              minWidth: 120,
-              height: 56,
-              borderRadius: 3,
-              fontWeight: 600,
-              fontSize: '1rem',
-              background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
-              boxShadow: '0 4px 16px rgba(25, 118, 210, 0.3)',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #1565c0 0%, #0d47a1 100%)',
-                boxShadow: '0 6px 20px rgba(25, 118, 210, 0.4)',
-                transform: 'translateY(-2px)'
-              },
-              '&:disabled': {
-                background: 'rgba(0, 0, 0, 0.12)'
-              }
-            }}
-          >
-            {searchLoading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              <>
-                <SearchIcon sx={{ mr: 1 }} />
-                ค้นหา
-              </>
-            )}
-          </Button>
-          
-          {(studentData || studentId) && (
-            <Fade in={true}>
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={onReset}
-                disabled={searchLoading}
-                sx={{
-                  minWidth: 100,
-                  height: 56,
-                  borderRadius: 3,
-                  borderWidth: 2,
-                  fontWeight: 600,
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    borderWidth: 2,
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 4px 12px rgba(211, 47, 47, 0.2)'
+                  '&.Mui-focused': {
+                    '& fieldset': {
+                      borderWidth: 2.5,
+                      borderColor: 'primary.main',
+                    },
+                    boxShadow: '0 0 0 4px rgba(25, 118, 210, 0.1)'
                   }
-                }}
-                startIcon={<ClearIcon />}
-              >
-                รีเซ็ต
-              </Button>
-            </Fade>
-          )}
+                },
+                '& .MuiInputLabel-root': {
+                  fontWeight: 500
+                }
+              }}
+            />
+
+
+            <Button
+              variant="outlined"
+              onClick={handleNextIndex}
+              disabled={!studentIndex || searchLoading}
+              sx={{
+                minWidth: 56,
+                height: 56,
+                borderRadius: 3,
+                borderWidth: 2,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  borderWidth: 2,
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
+                  bgcolor: 'primary.50'
+                },
+                '&:disabled': {
+                  borderWidth: 2
+                }
+              }}
+            >
+              <ArrowForwardIcon />
+            </Button>
+          </Grid>
+
+          <Grid sx={{ display: 'flex', flexxDirection: 'row', alignItems: 'center', gap: 2, flexGrow: 1 }}>
+            <Button
+              variant="outlined"
+              onClick={handlePrevious}
+              disabled={!studentId || parseInt(studentId) <= 1 || searchLoading}
+              sx={{
+                minWidth: 56,
+                height: 56,
+                borderRadius: 3,
+                borderWidth: 2,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  borderWidth: 2,
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
+                  bgcolor: 'primary.50'
+                },
+                '&:disabled': {
+                  borderWidth: 2
+                }
+              }}
+            >
+              <ArrowBackIcon />
+            </Button>
+
+            <TextField
+              fullWidth
+              label="หมายเลขสอบ"
+              value={studentId}
+              onChange={(e) => setStudentId((e.target.value || '').replace(/\D/g, ''))}
+              onKeyPress={handleKeyPress}
+              placeholder="กรอกหมายเลขสอบ"
+              variant="outlined"
+              autoComplete="off"
+              InputProps={{
+                startAdornment: (
+                  <SchoolIcon sx={{ color: 'text.secondary', mr: 1 }} />
+                ),
+              }}
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  bgcolor: 'white',
+                  transition: 'all 0.3s ease',
+                  '& fieldset': {
+                    borderWidth: 2,
+                    borderColor: 'divider'
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'primary.main',
+                  },
+                  '&.Mui-focused': {
+                    '& fieldset': {
+                      borderWidth: 2.5,
+                      borderColor: 'primary.main',
+                    },
+                    boxShadow: '0 0 0 4px rgba(25, 118, 210, 0.1)'
+                  }
+                },
+                '& .MuiInputLabel-root': {
+                  fontWeight: 500
+                }
+              }}
+            />
+
+
+            <Button
+              variant="outlined"
+              onClick={handleNext}
+              disabled={!studentId || searchLoading}
+              sx={{
+                minWidth: 56,
+                height: 56,
+                borderRadius: 3,
+                borderWidth: 2,
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  borderWidth: 2,
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
+                  bgcolor: 'primary.50'
+                },
+                '&:disabled': {
+                  borderWidth: 2
+                }
+              }}
+            >
+              <ArrowForwardIcon />
+            </Button>
+          </Grid>
+
+
+
         </Box>
 
         {/* Student Data Display */}
         {studentData && (
           <Grow in={true} timeout={600}>
-            <Paper 
+            <Paper
               elevation={0}
-              sx={{ 
-                p: 4, 
+              sx={{
+                p: 4,
                 background: 'linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%)',
                 border: '2px solid',
                 borderColor: 'primary.light',
@@ -337,54 +411,74 @@ export default function StudentSearchCard({
 
                 <Grid item xs>
                   <Box sx={{ mb: 2 }}>
-                    <Typography 
-                      variant="h5" 
-                      fontWeight="700" 
-                      color="primary.dark"
-                      sx={{ mb: 0.5 }}
-                    >
-                      นนส. {studentData.name}
-                    </Typography>
-                    <Typography 
-                      variant="body1" 
-                      color="text.secondary"
-                      fontWeight="500"
-                      sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center',
-                        gap: 1
-                      }}
-                    >
-                      <Box 
-                        component="span"
-                        sx={{ 
-                          width: 6, 
-                          height: 6, 
-                          borderRadius: '50%', 
-                          bgcolor: 'primary.main' 
-                        }} 
-                      />
-                      รหัสประจำตัว {studentId}
-                       <Box 
-                        component="span"
-                        sx={{ 
-                          width: 6, 
-                          height: 6, 
-                          borderRadius: '50%', 
-                          bgcolor: 'primary.main' 
-                        }} 
-                      />
-                      {studentData.class} 
-                    </Typography>
+                    <Grid sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      <Grid sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                        <Typography
+                          variant="h5"
+                          fontWeight="700"
+                          color="primary.dark"
+                          sx={{ mb: 0.5 }}
+                        >
+                          นนส. {studentData.name}
+                        </Typography>
+                        {studentData.nco_king && (
+                          <Chip
+                            label={studentData.nco_king}
+                            color="error"
+                            variant="filled"
+                            size="medium"
+                            sx={{ fontSize: 20 }}
+                          />
+                        )}
+                      </Grid>
+
+
+
+                      <Grid sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                        <Typography
+                          variant="body1"
+                          color="text.secondary"
+                          fontWeight="500"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
+                          }}
+                        >
+                          <Box
+                            component="span"
+                            sx={{
+                              width: 6,
+                              height: 6,
+                              borderRadius: '50%',
+                              bgcolor: 'primary.main'
+                            }}
+                          />
+                          ลำดับที่สอบได้ {studentData?.index}
+                          <Box
+                            component="span"
+                            sx={{
+                              width: 6,
+                              height: 6,
+                              borderRadius: '50%',
+                              bgcolor: 'primary.main'
+                            }}
+                          />
+                          เลขประจำตัว {studentData?.studentId}
+
+                        </Typography>
+                      </Grid>
+                    </Grid>
                   </Box>
-                  
+
+
                   {studentData.remark && (
                     <Chip
                       label={`เลือก: ${studentData.remark}`}
                       color="primary"
                       variant="filled"
                       size="medium"
-                      sx={{ 
+                      sx={{
                         fontWeight: 600,
                         height: 36,
                         borderRadius: 2,

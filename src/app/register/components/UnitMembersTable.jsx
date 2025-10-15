@@ -93,7 +93,7 @@ export default function UnitMembersTable({
         {/* Search Section */}
         <Autocomplete
           options={subunits}
-          getOptionLabel={(option) => `${option.name} (${option.parentUnit})`}
+          getOptionLabel={(option) => `${option.name}`}
           value={selectedUnit}
           onChange={(e, val) => onSelectSubunit && onSelectSubunit(val)}
           renderInput={(params) => (
@@ -375,7 +375,7 @@ export default function UnitMembersTable({
                                 borderColor: alpha('#4caf50', 0.3)
                               }}
                             />
-                          ) : studentHasAssignedPosition ? (
+                          ) : studentHasAssignedPosition || studentData?.nco_king ? (
                             <Chip
                               label="ว่าง"
                               size="small"

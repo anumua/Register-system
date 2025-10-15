@@ -23,6 +23,7 @@ import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
   const [studentId, setStudentId] = useState('');
+  const [studentIndex, setStudentIndex] = useState('');
   const [studentData, setStudentData] = useState(null);
   const [unitData, setUnitData] = useState([]);
   const [militaryUnits, setMilitaryUnits] = useState([]);
@@ -79,14 +80,20 @@ export default function RegisterPage() {
     }
     return [];
   };
+  console.log(subunits, 'subunits');
 
   // ค้นหานักเรียน
-  const searchStudent = async (id) => {
+  const searchIndex = async (id) => {
     setSearchLoading(true);
     setError('');
 
     try {
-      const response = await fetch(`/api/students?nco_number=${id}`);
+      if (!/^\d+$/.test(String(id || ''))) {
+        setError('กรุณากรอกลำดับที่เป็นตัวเลขเท่านั้น');
+        setSearchLoading(false);
+        return;
+      }
+      const response = await fetch(`/api/students?nco_index=${id}`);
       const data = await response.json();
 
       if (data.error) {
@@ -109,6 +116,63 @@ export default function RegisterPage() {
           class: student.class,
           studentId: student.studentId,
           assigned: assigned, // <-- เพิ่ม flag ตรงนี้
+          index: student.nco_index,
+          nco_king: student.nco_king,
+          remark:
+            !student.remark || student.remark === 'null null ตำแหน่ง null'
+              ? ''
+              : student.remark
+        });
+      } else {
+        setError('ไม่พบข้อมูลนักเรียนนายสิบ');
+        setStudentData(null);
+      }
+    } catch (err) {
+      console.error(err);
+      setError('เกิดข้อผิดพลาดในการค้นหานักเรียน');
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+  
+
+  // ค้นหานักเรียน
+  const searchStudent = async (id) => {
+    setSearchLoading(true);
+    setError('');
+
+    try {
+      if (!/^\d+$/.test(String(id || ''))) {
+        setError('กรุณากรอกเลขประจำตัวเป็นตัวเลขเท่านั้น');
+        setSearchLoading(false);
+        return;
+      }
+      const response = await fetch(`/api/students?nco_number=${id}`);
+      const data = await response.json();
+
+      if (data.error) {
+        setError(data.error);
+        setStudentData(null);
+      } else if (data.students && data.students.length > 0) {
+        const student = data.students[0];
+
+        // ตรวจสอบว่าผู้ค้นหามีตำแหน่งแล้วหรือไม่ จาก militaryUnits (pos.occupieNumber ตาม API)
+        const assigned = militaryUnits.some((unit) =>
+          unit.subunits.some((sub) =>
+            sub.positions.some((p) => p.occupieNumber && String(p.occupieNumber) === String(student.studentId))
+          )
+        );
+        console.log(student, 'student');
+
+        setStudentData({
+          id: student.id,
+          name: student.name,
+          rank: student.rank,
+          class: student.class,
+          studentId: student.studentId,
+          assigned: assigned, // <-- เพิ่ม flag ตรงนี้
+          index: student.nco_index,
+          nco_king: student.nco_king,
           remark:
             !student.remark || student.remark === 'null null ตำแหน่ง null'
               ? ''
@@ -260,6 +324,7 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+  console.log(studentIndex, 'studentIndex');
 
   return (
     <Container maxWidth="lg" sx={{ py: 1, px: 2 }}>
@@ -283,10 +348,13 @@ export default function RegisterPage() {
        
           <StudentSearchCard
             studentId={studentId}
+            studentIndex={studentIndex}
+            setStudentIndex={setStudentIndex}
             setStudentId={setStudentId}
             studentData={studentData}
             searchLoading={searchLoading}
             onSearch={searchStudent}
+            onSearchIndex={searchIndex}
             onReset={() => {
               setStudentData(null);
               setStudentId('');
