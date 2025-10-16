@@ -174,7 +174,7 @@ export default function RegisterPage() {
           index: student.nco_index,
           nco_king: student.nco_king,
           remark:
-            !student.remark || student.remark === 'null null ตำแหน่ง null'
+            !student.remark || student.remark === "null  null   (null)  (null)"
               ? ''
               : student.remark
         });
