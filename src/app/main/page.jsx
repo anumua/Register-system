@@ -31,7 +31,7 @@ export default function HomePage() {
   const menuItems = [
     { icons: <AppRegistrationIcon fontSize="large" />, title: 'เลือกหน่วยบรรจุ', subtitile: 'เลือกหน่วยให้กับนักเรียน', pagename: '/register', color: '#059669' },
     { icons: <GroupsIcon fontSize="large" />, title: 'รายละเอียดการเลือกหน่วย', subtitile: 'ดูสถานะหน่วยและรายชื่อสมาชิก', pagename: '/detail', color: '#2563eb' },
-    { icons: <AssessmentIcon fontSize="large" />, title: 'สรุปข้อมูลหน่วย', subtitile: 'รายงานและสถิติการลงทะเบียน', pagename: '/reports', color: '#7c3aed' },
+    { icons: <AssessmentIcon fontSize="large" />, title: 'สรุปข้อมูลหน่วย', subtitile: 'รายงานและสถิติการลงทะเบียน', pagename: '/report', color: '#7c3aed' },
   ];
 
  
