@@ -242,7 +242,7 @@ export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
                       },
                     }}
                   />
-                  <Typography 
+                  {/* <Typography 
                     variant="caption" 
                     color="text.secondary" 
                     sx={{ 
@@ -253,7 +253,7 @@ export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
                     }}
                   >
                     {percentage.toFixed(1)}%
-                  </Typography>
+                  </Typography> */}
                 </Box>
 
                 <Divider sx={{ my: 2 }} />

@@ -21,12 +21,14 @@ export default function HomePage() {
     const [statCard, setStatCard] = useState(false);
 
   
-  const statItems = [
-    { icons: <SchoolIcon fontSize="large" />, title: 'นักเรียนทั้งหมด', value: statCard?.total_student ? statCard?.total_student : 0, unit: 'คน', color: '#2563eb' },
-    { icons: <PersonAddIcon fontSize="large" />, title: 'ลงทะเบียนแล้ว', value: statCard?.registered ? statCard?.registered : 0, unit: 'คน', color: '#059669' },
-    { icons: <PendingIcon fontSize="large" />, title: 'รอลงทะเบียน', value: statCard?.total_student ? statCard?.total_student - statCard?.registered : 0, unit: 'คน', color: '#dc2626' },
-    { icons: <EventAvailableIcon fontSize="large" />, title: 'ตำแหน่งว่างคงเหลือ', value: statCard?.total_position ? statCard?.total_position - statCard?.registered : 0, unit: 'ตำแหน่ง', color: '#7c3aed' },
-  ];
+  // const statItems = [
+  //   { icons: <SchoolIcon fontSize="large" />, title: 'นักเรียนทั้งหมด', value: statCard?.total_student ? statCard?.total_student : 0, unit: 'คน', color: '#2563eb' },
+  //   { icons: <SchoolIcon fontSize="large" />, title: 'ทม.', value: statCard?.king ? statCard?.king : 0, unit: 'คน', color: '#2563eb' },
+  //   { icons: <PersonAddIcon fontSize="large" />, title: 'เลือกแล้ว', value: statCard?.registered ? statCard?.registered : 0, unit: 'คน', color: '#059669' },
+  //   { icons: <PendingIcon fontSize="large" />, title: 'รอลงเลือก', value: statCard?.total_student ? (statCard?.total_student - statCard?.registered) - statCard.king : 0, unit: 'คน', color: '#dc2626' },
+   
+    
+  // ];
 
   const menuItems = [
     { icons: <AppRegistrationIcon fontSize="large" />, title: 'เลือกหน่วยบรรจุ', subtitile: 'เลือกหน่วยให้กับนักเรียน', pagename: '/register', color: '#059669' },
@@ -35,14 +37,15 @@ export default function HomePage() {
   ];
 
  
-  useEffect(() => {
-    let cancelled = false;
-    fetch('/api/main', { cache: 'no-store' })
-      .then(res => res.json())
-      .then(data => { if (!cancelled) setStatCard(data[0] || []); })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, []);
+  // useEffect(() => {
+  //   let cancelled = false;
+  //   fetch('/api/main', { cache: 'no-store' })
+  //     .then(res => res.json())
+  //     .then(data => { if (!cancelled) setStatCard(data[0] || []); })
+  //     .catch(() => {});
+  //   return () => { cancelled = true; };
+  // }, []);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -56,7 +59,7 @@ export default function HomePage() {
     <>
       <Container>
         {/* สรุปสถิติ */}
-        <Box
+        {/* <Box
           sx={{
             display: 'grid',
             gap: 2,
@@ -83,7 +86,7 @@ export default function HomePage() {
                 color={item.color}
               />
             ))}
-        </Box>
+        </Box> */}
 
         {/* เมนูหลัก */}
         <Box>

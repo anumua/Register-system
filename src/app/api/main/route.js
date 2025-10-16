@@ -8,7 +8,9 @@ export async function GET() {
       SELECT 
         COUNT(1)::int AS total_position, 
         SUM(CASE WHEN nco_id IS NOT NULL THEN 1 ELSE 0 END)::int AS registered,
-        (SELECT COUNT(1)::int FROM students) AS total_student
+        (SELECT COUNT(1)::int FROM students) AS total_student,
+		(select count(1) from students where nco_king = 'ทม.')::int as king, 
+    (select count(1) from positions where pos_king !='ทม.' and nco_id is null)::int as emtry
       FROM positions;
     `;
     
