@@ -19,6 +19,7 @@
 
 		useEffect(() => {
 			let isMounted = true;
+			let intervalId;
 
 			async function load() {
 				try {
@@ -46,9 +47,14 @@
 				}
 			}
 
+			// initial load
 			load();
+			// poll every 10 seconds
+			intervalId = setInterval(load, 5000);
+
 			return () => {
 				isMounted = false;
+				if (intervalId) clearInterval(intervalId);
 			};
 		}, []);
 

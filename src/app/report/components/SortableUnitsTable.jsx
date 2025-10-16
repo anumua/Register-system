@@ -81,11 +81,11 @@ export default function SortableUnitsTable({ rows }) {
     const headCells = [
         { id: "unit_army", label: "กองทัพ", numeric: false },
         { id: "unit_division", label: "กองพล", numeric: false },
-        { id: "unit_name", label: "ชื่อหน่วย", numeric: false },
+        { id: "unit_name", label: "หน่วย", numeric: false },
         { id: "unit_prov", label: "จังหวัด", numeric: false },
-        { id: "total", label: "รวมทั้งหมด", numeric: true },
-        { id: "registered_count", label: "ลงทะเบียนแล้ว", numeric: true },
-        { id: "vacant", label: "ตำแหน่งว่าง", numeric: true },
+        { id: "total", label: "ตำแหน่งทั้งหมด", numeric: true },
+        { id: "registered_count", label: "เลือกแล้ว", numeric: true },
+        { id: "vacant", label: "ว่าง", numeric: true },
         { id: "percentNum", label: "ร้อยละ", numeric: true }
     ];
 
