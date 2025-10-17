@@ -40,8 +40,10 @@ export default function DetailPage() {
   });
 
   const allSubunits = (units || []).map(u => ({
+    unitArmy: u.unit_army,
     unitName: u.unit_division,
     subunitName: u.unit_name,
+    unitProv: u.unit_prov,
     code: u.pos_index,
     current: u.registered_count,
     capacity: u.total,

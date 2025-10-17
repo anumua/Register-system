@@ -19,10 +19,13 @@ export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
     const search = searchTerm.toLowerCase();
     return (
       su.subunitName?.toLowerCase().includes(search) ||
-      su.unitName?.toLowerCase().includes(search)
+      su.unitName?.toLowerCase().includes(search) ||
+      su.unitArmy?.toLowerCase().includes(search) ||
+      su.unitProv?.toLowerCase().includes(search)
     );
   });
 
+  
   return (
     <Box>
       {/* Search Bar */}
@@ -186,7 +189,29 @@ export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
                           display: 'inline-block',
                         }} 
                       />
-                      {su.unitName}
+                      {su.unitName} ({su.unitArmy})
+                    </Typography>
+                     <Typography 
+                      variant="caption" 
+                      color="text.secondary"
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                      }}
+                    >
+                      <Box 
+                        component="span" 
+                        sx={{ 
+                          width: 4, 
+                          height: 4, 
+                          borderRadius: '50%', 
+                          bgcolor: 'primary.main',
+                          display: 'inline-block',
+                        }} 
+                      />
+                      {su.unitProv}
                     </Typography>
                   </Box>
 
