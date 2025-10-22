@@ -88,9 +88,7 @@ export default function RegisterPage() {
     }
     return [];
   };
-  console.log(subunits, 'subunits');
-  console.log(unitData)
-  console.log(studentData?.fix_unit, 'studentData');
+
 
   // ฟังก์ชันสำหรับเลือกหน่วยย่อยตาม fix_unit
   const selectUnitByFixUnit = (fixUnitName) => {
@@ -268,6 +266,7 @@ export default function RegisterPage() {
       positionCode: pos.code,
       positionName: pos.name,
       pos_index: pos.pos_index || null,
+      pos_king: pos.king || null
     }));
 
     setUnitData(members);

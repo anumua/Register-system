@@ -289,6 +289,8 @@ export default function UnitMembersTable({
                     const canAssign = isEmpty && !!studentData;
                     const studentHasAssignedPosition = !!studentData && !!studentData.assigned;
                     const paddedId = String(pos.studentId).padStart(3, '0');
+                    console.log('Rendering position:', pos, 'Can assign:', canAssign);
+                    console.log(studentData, 'studentData');
 
                     return (
                       <TableRow
@@ -402,7 +404,7 @@ export default function UnitMembersTable({
                                 borderColor: alpha('#4caf50', 0.3)
                               }}
                             />
-                          ) : studentHasAssignedPosition ? (
+                          ) : studentHasAssignedPosition ||  (pos?.pos_king != null && (studentData?.nco_king == null || studentData?.nco_king.trim() === '')) ? (
                             <Chip
                               label="ว่าง"
                               size="small"
