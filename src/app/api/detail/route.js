@@ -18,7 +18,6 @@ export async function GET() {
                 ELSE 0
             END) AS registered_count
     FROM (select * , min(pos_index) over (partition by unit_name) as min_order from positions)
-    WHERE pos_king is null or pos_king = ''
     GROUP BY unit_army, unit_division, unit_name, unit_prov,min_order
     ORDER BY min_order  
     `;

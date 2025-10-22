@@ -15,7 +15,7 @@ model positions {
   unit_army     String?   @db.VarChar(20)
   unit_division String?   @db.VarChar(20)
   unit_name     String?   @db.VarChar(100)
-  unit_prov     String?   @db.VarChar(4)
+  unit_prov     String?   @db.VarChar(20)
   pos_name      String?   @db.VarChar(100)
   pos_pronum    String?   @db.VarChar(5)
   pos_code      String?   @db.VarChar(12)
@@ -39,6 +39,7 @@ model students {
   nco_id13   String?     @db.VarChar(13)
   nco_mark   String?     @db.VarChar(200)
   nco_king   String?     @db.VarChar(50)
+  fix_unit   String?     @db.VarChar(50)
   positions  positions[]
 }
 

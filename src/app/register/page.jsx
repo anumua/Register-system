@@ -49,6 +49,14 @@ export default function RegisterPage() {
     loadMilitaryUnits();
   }, []);
 
+  // ใช้ useEffect เพื่อเลือกหน่วยย่อยอัตโนมัติเมื่อมี studentData และ subunits โหลดเสร็จแล้ว
+  useEffect(() => {
+    if (studentData?.fix_unit && subunits.length > 0) {
+      console.log('useEffect triggered - studentData.fix_unit:', studentData.fix_unit);
+      selectUnitByFixUnit(studentData.fix_unit);
+    }
+  }, [studentData, subunits]);
+
   const loadMilitaryUnits = async () => {
     try {
       setLoading(true);
@@ -81,6 +89,41 @@ export default function RegisterPage() {
     return [];
   };
   console.log(subunits, 'subunits');
+  console.log(unitData)
+  console.log(studentData?.fix_unit, 'studentData');
+
+  // ฟังก์ชันสำหรับเลือกหน่วยย่อยตาม fix_unit
+  const selectUnitByFixUnit = (fixUnitName) => {
+    console.log('selectUnitByFixUnit called with:', fixUnitName);
+    console.log('Available subunits:', subunits);
+    
+    if (!fixUnitName || !subunits.length) {
+      console.log('No fix_unit name or subunits not loaded yet');
+      return;
+    }
+    
+    // ค้นหาหน่วยย่อยที่ตรงกับ fix_unit
+    const matchingSubunit = subunits.find(subunit => {
+      const nameMatch = subunit.name === fixUnitName;
+      const parentMatch = subunit.parentUnit === fixUnitName;
+      const nameIncludes = subunit.name.includes(fixUnitName);
+      const fixUnitIncludes = fixUnitName.includes(subunit.name);
+      
+      console.log(`Checking subunit: ${subunit.name} (parent: ${subunit.parentUnit})`);
+      console.log(`  nameMatch: ${nameMatch}, parentMatch: ${parentMatch}, nameIncludes: ${nameIncludes}, fixUnitIncludes: ${fixUnitIncludes}`);
+      
+      return nameMatch || parentMatch || nameIncludes || fixUnitIncludes;
+    });
+    
+    console.log('Found matching subunit:', matchingSubunit);
+    
+    if (matchingSubunit) {
+      selectSubunit(matchingSubunit);
+    } else {
+      console.log('No matching subunit found for fix_unit:', fixUnitName);
+    }
+  };
+
 
   // ค้นหานักเรียน
   const searchIndex = async (id) => {
@@ -118,11 +161,13 @@ export default function RegisterPage() {
           assigned: assigned, // <-- เพิ่ม flag ตรงนี้
           index: student.nco_index,
           nco_king: student.nco_king,
+          fix_unit: student.fix_unit,
           remark:
             !student.remark || student.remark === "null  null   (null)  (null)"
               ? ''
               : student.remark
         });
+
       } else {
         setError('ไม่พบข้อมูลนักเรียนนายสิบ');
         setStudentData(null);
@@ -173,11 +218,13 @@ export default function RegisterPage() {
           assigned: assigned, // <-- เพิ่ม flag ตรงนี้
           index: student.nco_index,
           nco_king: student.nco_king,
+          fix_unit: student.fix_unit,
           remark:
             !student.remark || student.remark === "null  null   (null)  (null)"
               ? ''
               : student.remark
         });
+
       } else {
         setError('ไม่พบข้อมูลนักเรียนนายสิบ');
         setStudentData(null);
@@ -192,6 +239,12 @@ export default function RegisterPage() {
 
   // เลือกหน่วยย่อย
   const selectSubunit = (subunit) => {
+    // ถ้ามี fix_unit และพยายามเปลี่ยนหน่วยย่อย ให้แสดงข้อความเตือน
+    if (studentData?.fix_unit && subunit && selectedSubunit && subunit.id !== selectedSubunit.id) {
+      setError(`ไม่สามารถเปลี่ยนหน่วยย่อยได้ เนื่องจากถูกกำหนดไว้แล้ว: ${studentData.fix_unit}`);
+      return;
+    }
+
     setSelectedSubunit(subunit);
     if (!subunit) {
       setUnitData([]);
@@ -199,7 +252,7 @@ export default function RegisterPage() {
     }
 
     // แสดงตำแหน่งทั้งหมดของหน่วยย่อย (occupied หรือ ว่าง)
-    console.log(subunit, 'subunit');
+    console.log(subunit, 'chosen subunit');
     const members = subunit.positions.map((pos) => ({
       id: pos.posId,
       // เก็บทั้ง studentId (ใช้ตรวจว่าว่างหรือไม่) และ studentNumber (ใช้แสดงในคอลัมน์)
@@ -395,3 +448,4 @@ export default function RegisterPage() {
     </Container>
   );
 }
+  

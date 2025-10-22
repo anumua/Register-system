@@ -90,23 +90,43 @@ export default function UnitMembersTable({
 
         <Divider sx={{ mb: 4, opacity: 0.6 }} />
 
+        {/* Locked Unit Notice */}
+        {studentData?.fix_unit && (
+          <Box sx={{ 
+            mb: 3, 
+            p: 2, 
+            backgroundColor: alpha('#ff9800', 0.1), 
+            border: '1px solid', 
+            borderColor: alpha('#ff9800', 0.3),
+            borderRadius: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1
+          }}>
+            <Typography variant="body2" sx={{ color: 'warning.main', fontWeight: 600 }}>
+              🔒 หน่วยย่อยถูกกำหนดไว้แล้ว: {studentData.fix_unit}
+            </Typography>
+          </Box>
+        )}
+
         {/* Search Section */}
         <Autocomplete
           options={subunits}
           getOptionLabel={(option) => `${option.name}`}
           value={selectedUnit}
           onChange={(e, val) => onSelectSubunit && onSelectSubunit(val)}
+          disabled={!!studentData?.fix_unit}
           renderInput={(params) => (
             <TextField
               {...params}
-              label="ค้นหาหน่วยย่อย"
-              placeholder="กรุณาเลือกหน่วยย่อย..."
+              label={studentData?.fix_unit ? "หน่วยย่อย (ล็อคแล้ว)" : "ค้นหาหน่วยย่อย"}
+              placeholder={studentData?.fix_unit ? "หน่วยย่อยถูกกำหนดแล้ว" : "กรุณาเลือกหน่วยย่อย..."}
               variant="outlined"
               InputProps={{
                 ...params.InputProps,
                 startAdornment: (
                   <>
-                    <SearchIcon sx={{ color: 'text.secondary', ml: 1, mr: -0.5 }} />
+                    <SearchIcon sx={{ color: studentData?.fix_unit ? 'text.disabled' : 'text.secondary', ml: 1, mr: -0.5 }} />
                     {params.InputProps.startAdornment}
                   </>
                 )
@@ -382,7 +402,7 @@ export default function UnitMembersTable({
                                 borderColor: alpha('#4caf50', 0.3)
                               }}
                             />
-                          ) : studentHasAssignedPosition || studentData?.nco_king ? (
+                          ) : studentHasAssignedPosition ? (
                             <Chip
                               label="ว่าง"
                               size="small"

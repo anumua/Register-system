@@ -9,7 +9,7 @@ export async function GET() {
     select a.*, concat(b.first_name,' ', b.last_name) as student_name, b.nco_number
     from positions a
     left join students b on a.nco_id = b.nco_id
-    WHERE pos_king != 'ทม.'
+    
     order by unit_division asc ,  unit_name asc ,  pos_pronum asc
     `;
   

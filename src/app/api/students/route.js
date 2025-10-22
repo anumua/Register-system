@@ -51,7 +51,8 @@ export async function GET(request) {
       nco_index: student.nco_index || '',
       nco_king: student.nco_king || '',
       remark: `${student.pos_name}  ${student.unit_name}   (${student.unit_division})  (${student.unit_army})` || '',
-      king: student.nco_king || ''
+      king: student.nco_king || '',
+      fix_unit: student.fix_unit || ''
     }));
 
     return new Response(JSON.stringify({ students: formattedStudents }), {
