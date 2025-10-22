@@ -140,7 +140,7 @@ export default function LoginPage() {
             fontWeight: 500,
           }}
         >
-          ยินดีต้อนรับกลับเข้าสู่ระบบลงทะเบียนหน่วย
+          ยินดีต้อนรับกลับเข้าสู่ระบบเลือกหน่วย
         </Typography>
         <Divider sx={{ width: "100%", mb: 3 }} />
 
