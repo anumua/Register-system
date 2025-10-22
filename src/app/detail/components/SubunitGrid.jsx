@@ -13,6 +13,7 @@ export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
   const theme = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
 
+  console.log(allSubunits, 'allSubunits');
   // Filter subunits based on search term
   const filteredSubunits = allSubunits.filter((su) => {
     if (!searchTerm) return true;
@@ -21,7 +22,8 @@ export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
       su.subunitName?.toLowerCase().includes(search) ||
       su.unitName?.toLowerCase().includes(search) ||
       su.unitArmy?.toLowerCase().includes(search) ||
-      su.unitProv?.toLowerCase().includes(search)
+      su.unitProv?.toLowerCase().includes(search) ||
+      su.posking?.toLowerCase().includes(search)
     );
   });
 
@@ -167,7 +169,14 @@ export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
                         lineHeight: 1.3,
                       }}
                     >
-                      {su.subunitName}
+                      
+                       {su.subunitName} {su.posking &&  <Chip
+                            label='ทม.'
+                            color="error"
+                            variant="filled"
+                            size="small"
+                            sx={{ fontSize: 15 }}
+                          /> }
                     </Typography>
                     <Typography 
                       variant="caption" 

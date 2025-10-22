@@ -104,7 +104,7 @@ export default function UnitMembersTable({
             gap: 1
           }}>
             <Typography variant="body2" sx={{ color: 'warning.main', fontWeight: 600 }}>
-              🔒 หน่วยย่อยถูกกำหนดไว้แล้ว: {studentData.fix_unit}
+              🔒 หน่วยถูกกำหนดไว้แล้ว: {studentData.fix_unit}
             </Typography>
           </Box>
         )}
@@ -119,8 +119,8 @@ export default function UnitMembersTable({
           renderInput={(params) => (
             <TextField
               {...params}
-              label={studentData?.fix_unit ? "หน่วยย่อย (ล็อคแล้ว)" : "ค้นหาหน่วยย่อย"}
-              placeholder={studentData?.fix_unit ? "หน่วยย่อยถูกกำหนดแล้ว" : "กรุณาเลือกหน่วยย่อย..."}
+              label={studentData?.fix_unit ? "หน่วย (กำหนดแล้ว)" : "ค้นหาหน่วย"}
+              placeholder={studentData?.fix_unit ? "หน่วยถูกกำหนดแล้ว" : "กรุณาเลือกหน่วย..."}
               variant="outlined"
               InputProps={{
                 ...params.InputProps,
@@ -193,10 +193,10 @@ export default function UnitMembersTable({
               <BadgeIcon sx={{ fontSize: 40, color: 'primary.main' }} />
             </Box>
             <Typography variant="h6" color="text.primary" gutterBottom sx={{ fontWeight: 600, mb: 1 }}>
-              กรุณาเลือกหน่วยย่อย
+              กรุณาเลือกหน่วย
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400, mx: 'auto' }}>
-              เลือกหน่วยย่อยจากช่องค้นหาด้านบน เพื่อแสดงรายการตำแหน่งและข้อมูลสมาชิกในหน่วยงาน
+              เลือกหน่วยจากช่องค้นหาด้านบน เพื่อแสดงรายการตำแหน่งและข้อมูลสมาชิกในหน่วยงาน
             </Typography>
           </Paper>
         ) : (
@@ -217,7 +217,7 @@ export default function UnitMembersTable({
               }}
             >
               <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary', flex: 1 }}>
-                หน่วยย่อย: {selectedUnit.name}
+                หน่วย: {selectedUnit.name}
               </Typography>
              
               <Chip
@@ -469,7 +469,7 @@ export default function UnitMembersTable({
                   <BadgeIcon sx={{ fontSize: 32, color: 'text.disabled' }} />
                 </Box>
                 <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                  ไม่พบข้อมูลตำแหน่งในหน่วยย่อยนี้
+                  ไม่พบข้อมูลตำแหน่งในหน่วยนี้
                 </Typography>
               </Box>
             )}

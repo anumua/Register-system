@@ -241,7 +241,7 @@ export default function RegisterPage() {
   const selectSubunit = (subunit) => {
     // ถ้ามี fix_unit และพยายามเปลี่ยนหน่วยย่อย ให้แสดงข้อความเตือน
     if (studentData?.fix_unit && subunit && selectedSubunit && subunit.id !== selectedSubunit.id) {
-      setError(`ไม่สามารถเปลี่ยนหน่วยย่อยได้ เนื่องจากถูกกำหนดไว้แล้ว: ${studentData.fix_unit}`);
+      setError(`ไม่สามารถเปลี่ยนหน่วยได้ เนื่องจากถูกกำหนดไว้แล้ว: ${studentData.fix_unit}`);
       return;
     }
 
@@ -277,7 +277,7 @@ export default function RegisterPage() {
   const addStudentToPosition = async (position) => {
     console.log(position, 'position');
     if (!studentData || !selectedSubunit) {
-      setError('กรุณาค้นหานักเรียนและเลือกหน่วยย่อยก่อน');
+      setError('กรุณาค้นหานักเรียนและเลือกหน่วยก่อน');
       return;
     }
 

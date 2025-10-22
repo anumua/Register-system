@@ -176,7 +176,7 @@ export default function StudentSearchCard({
 
             <TextField
               fullWidth
-              label="ลำดับที่สอบได้"
+              label="ลำดับเลือกหน่วย"
               value={studentIndex}
               onChange={(e) => setStudentIndex((e.target.value || '').replace(/\D/g, ''))}
               onKeyPress={handleKeyPressIndex}
@@ -454,7 +454,7 @@ export default function StudentSearchCard({
                               bgcolor: 'primary.main'
                             }}
                           />
-                          ลำดับที่สอบได้ {studentData?.index}
+                          ลำดับเลือกหน่วย {studentData?.index}
                           <Box
                             component="span"
                             sx={{
@@ -465,7 +465,6 @@ export default function StudentSearchCard({
                             }}
                           />
                           เลขประจำตัว {studentData?.studentId}
-
                         </Typography>
                       </Grid>
                     </Grid>

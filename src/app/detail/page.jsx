@@ -39,6 +39,7 @@ export default function DetailPage() {
     revalidateOnFocus: false,
   });
 
+
   const allSubunits = (units || []).map(u => ({
     unitArmy: u.unit_army,
     unitName: u.unit_division,
@@ -48,6 +49,7 @@ export default function DetailPage() {
     current: u.registered_count,
     capacity: u.total,
     positions: u.positions || [],
+    posking: u.pos_king,
   }));
 
   const handleUnitClick = (item, isSubunit = false) => {
