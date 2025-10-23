@@ -14,6 +14,7 @@ export async function GET(request, { params }) {
         a.unit_name,
         a.pos_index,
         a.pos_name,
+        a.pos_code,
         COALESCE(CONCAT(b.first_name, ' ', b.last_name), '-') AS student_name,
         b.nco_number
       FROM positions a

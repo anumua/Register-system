@@ -50,6 +50,7 @@ export default function DetailPage() {
     capacity: u.total,
     positions: u.positions || [],
     posking: u.pos_king,
+    pos_code: u.pos_code,
   }));
 
   const handleUnitClick = (item, isSubunit = false) => {

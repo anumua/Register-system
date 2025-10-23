@@ -319,7 +319,7 @@ export default function UnitDialog({ open, onClose, selectedUnit, isMobile, isSm
                             fontSize: '0.95rem'
                           }}
                         >
-                          {row.pos_index}
+                          {row.pos_code}
                         </TableCell>
                       )}
                       <TableCell 

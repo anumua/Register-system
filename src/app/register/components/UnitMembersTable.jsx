@@ -80,11 +80,11 @@ export default function UnitMembersTable({
                 letterSpacing: -0.5
               }}
             >
-              จัดการตำแหน่งในหน่วยงาน
+              เลือกตำแหน่งในหน่วย
             </Typography>
           </Box>
           <Typography variant="body2" color="text.secondary" sx={{ ml: 5, fontWeight: 400 }}>
-            เลือกหน่วยเพื่อดูและจัดการตำแหน่งในหน่วยงานของคุณ
+            เลือกหน่วยเพื่อดูและจัดการตำแหน่งในหน่วยงาน
           </Typography>
         </Box>
 

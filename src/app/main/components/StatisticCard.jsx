@@ -43,7 +43,7 @@ export default function StatisticCard({ icons, title, value, unit, color = '#256
           variant="body2" 
           color="text.secondary"
           sx={{ 
-            fontSize: '0.875rem',
+            fontSize: '1.3rem',
             fontWeight: 600,
             mb: 0.5,
             lineHeight: 1.2,
@@ -59,7 +59,7 @@ export default function StatisticCard({ icons, title, value, unit, color = '#256
             component="div"
             sx={{ 
               fontWeight: 700,
-              fontSize: '1.5rem',
+              fontSize: '3rem',
               color: '#1e293b',
               lineHeight: 1.2
             }}
