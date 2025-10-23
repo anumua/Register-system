@@ -15,6 +15,7 @@ import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import SchoolIcon from '@mui/icons-material/School';
+import WorkIcon from '@mui/icons-material/Work';
 
 export default function HomePage() {
     const router = useRouter();
@@ -34,11 +35,12 @@ export default function HomePage() {
     { icons: <AppRegistrationIcon fontSize="large" />, title: 'เลือกหน่วยบรรจุ', subtitile: 'เลือกหน่วยให้กับนักเรียน', pagename: '/register', color: '#059669' },
     { icons: <GroupsIcon fontSize="large" />, title: 'รายละเอียดการเลือกหน่วย', subtitile: 'ดูสถานะหน่วยและรายชื่อสมาชิก', pagename: '/detail', color: '#2563eb' },
     { icons: <AssessmentIcon fontSize="large" />, title: 'สรุปข้อมูลหน่วย', subtitile: 'รายงานและสถิติการลงทะเบียน', pagename: '/report', color: '#7c3aed' },
+    { icons: <WorkIcon fontSize="large" />, title: 'สรุปข้อมูลตำแหน่ง', subtitile: 'รายงานและสถิติการลงทะเบียน', pagename: '/positions', color: '#7c3aed' },
   ];
 
  
   // useEffect(() => {
-  //   let cancelled = false;
+  //   let cancelled = false
   //   fetch('/api/main', { cache: 'no-store' })
   //     .then(res => res.json())
   //     .then(data => { if (!cancelled) setStatCard(data[0] || []); })
