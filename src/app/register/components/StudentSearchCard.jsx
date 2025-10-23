@@ -490,7 +490,7 @@ export default function StudentSearchCard({
 
 
                   <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, mt: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-                    {studentData.remark && (
+                    {studentData.assigned && onCancelAssignment &&   (
                       <Chip
                         label={`${studentData.remark}`}
                         color="primary"

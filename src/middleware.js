@@ -10,6 +10,7 @@ export function middleware(request) {
     pathname === "/detail" ||
     pathname === "/positions" ||
     pathname === "/report" ||
+    pathname === "/main" ||
     pathname.startsWith("/detail/") ||
     pathname.startsWith("/positions/") ||
     pathname.startsWith("/report/");

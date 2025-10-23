@@ -332,7 +332,9 @@ export default function RegisterPage() {
       // อัปเดต studentData ให้ assigned เป็น true ทันที
       setStudentData(prev => ({
         ...prev,
-        assigned: true
+        assigned: true,
+        remark: normalizeRemark(`${position.positionName}  ${selectedSubunit?.name || ''}`)
+
       }));
       
       // รีเซ็ต state และค้นหาใหม่ด้วยค่าเดิม
@@ -343,7 +345,7 @@ export default function RegisterPage() {
       // // รอสักครู่แล้วค้นหาใหม่ด้วยค่าเดิม
       // setTimeout(() => {
       //   // จำลองการกด Enter ที่ช่องค้นหาลำดับเลือกหน่วย
-      //   searchIndex(studentIndex);
+        // searchIndex(studentIndex);
       // }, 500);
 
       // setStudentId('');
@@ -396,6 +398,8 @@ export default function RegisterPage() {
         }
         return prev;
       });
+
+   
 
       setSuccess('ลบสำเร็จ');
     } catch (err) {
