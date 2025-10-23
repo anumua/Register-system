@@ -48,7 +48,7 @@ export default function SummaryCards({ allSubunits, isMobile }) {
 
   const statItems = [
     { icons: <SchoolIcon fontSize="large" />, title: 'นักเรียนทั้งหมด', value: statCard?.total_student ? statCard?.total_student : 0, unit: 'คน', color: '#2563eb' },
-    { icons: <SchoolIcon fontSize="large" />, title: 'ทม.', value: statCard?.king ? statCard?.king : 0, unit: 'คน', color: '#dc2626' },
+    { icons: <SchoolIcon fontSize="large" />, title: 'ฉก.', value: statCard?.king ? statCard?.king : 0, unit: 'คน', color: '#dc2626' },
     { icons: <PersonAddIcon fontSize="large" />, title: 'เลือกแล้ว', value: statCard?.registered ? statCard?.registered : 0, unit: 'คน', color: '#059669' },
     { icons: <PendingIcon fontSize="large" />, title: 'รอลงเลือก', value: statCard?.total_student ? (statCard?.total_student - statCard?.registered) : 0, unit: 'คน', color: '#FFD32C' },
     { icons: <PendingIcon fontSize="large" />, title: 'ตำแหน่งว่าง', value: statCard?.emtry ? statCard.emtry : 0, unit: 'คน', color: '#FFD32C' }

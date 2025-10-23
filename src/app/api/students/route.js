@@ -50,7 +50,7 @@ export async function GET(request) {
       ncoId13: student.nco_id13 || '',
       nco_index: student.nco_index || '',
       nco_king: student.nco_king || '',
-      remark: `${student.pos_name}  ${student.unit_name}   (${student.unit_division})  (${student.unit_army})` || '',
+      remark: `${student.pos_name}  ${student.unit_name}` || '',
       king: student.nco_king || '',
       fix_unit: student.fix_unit || ''
     }));

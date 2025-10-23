@@ -38,7 +38,7 @@ function getComparator(order, orderBy) {
 }
 
 export default function PositionsTable({ positions, title }) {
-    const [orderBy, setOrderBy] = useState("unit_army");
+    const [orderBy, setOrderBy] = useState("pos_index");
     const [order, setOrder] = useState("asc");
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -82,7 +82,7 @@ export default function PositionsTable({ positions, title }) {
     };
 
     const headCells = [
-        { id: "row_number", label: "ลำดับ", numeric: true, sortable: false, width: "70px" },
+        { id: "pos_index", label: "ลำดับ", numeric: true, sortable: true, width: "70px" },
         { id: "unit_army", label: "กองทัพ", numeric: false, sortable: true, width: "120px" },
         { id: "unit_division", label: "กองพล", numeric: false, sortable: true, width: "140px" },
         { id: "unit_name", label: "หน่วย", numeric: false, sortable: true, width: "180px" },
@@ -100,7 +100,7 @@ export default function PositionsTable({ positions, title }) {
             <Paper 
                 elevation={0} 
                 sx={{ 
-                    p: 3, 
+                    p: 3,
                     mb: 2, 
                     backgroundColor: isHighlight ? '#fff5f5' : '#f8f9fa',
                     border: '1px solid',
@@ -253,7 +253,7 @@ export default function PositionsTable({ positions, title }) {
                                     }}
                                 >
                                     <TableCell align="center" sx={{ fontWeight: 500, color: '#666' }}>
-                                        {idx + 1}
+                                        {pos.pos_index}
                                     </TableCell>
                                     <TableCell sx={{ fontWeight: 500 }}>
                                         {pos.unit_army || '-'}
@@ -266,19 +266,7 @@ export default function PositionsTable({ positions, title }) {
                                             <Typography variant="body2" sx={{ fontWeight: 500 }}>
                                                 {pos.pos_name || '-'}
                                             </Typography>
-                                            {pos.is_selected && (
-                                                <Chip 
-                                                    icon={<CheckCircle size={14} />}
-                                                    label="เลือกแล้ว" 
-                                                    size="small" 
-                                                    color="success" 
-                                                    sx={{ 
-                                                        height: 20,
-                                                        fontSize: '0.7rem',
-                                                        fontWeight: 600
-                                                    }}
-                                                />
-                                            )}
+                                        
                                         </Box>
                                     </TableCell>
                                     <TableCell>
@@ -300,7 +288,7 @@ export default function PositionsTable({ positions, title }) {
                                                     variant="body2" 
                                                     sx={{ 
                                                         fontWeight: 600,
-                                                        color: '#2e7d32',
+                                                        color: '#05339C',
                                                         mb: 0.5
                                                     }}
                                                 >

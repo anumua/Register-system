@@ -30,7 +30,7 @@ function getProgressColor(percent) {
 }
 
 function getStatusInfo(percent) {
-    if (percent >= 90) return { label: 'เกือบเต็ม', color: '#2e7d32', icon: TrendingUp };
+    if (percent >= 90) return { label: 'เต็ม', color: '#2e7d32', icon: TrendingUp };
     if (percent >= 70) return { label: 'ดี', color: '#388e3c', icon: TrendingUp };
     if (percent >= 50) return { label: 'ปานกลาง', color: '#f57c00', icon: Minus };
     if (percent >= 30) return { label: 'ต่ำ', color: '#e64a19', icon: TrendingDown };
@@ -189,7 +189,7 @@ export default function SortableUnitsTable({ rows, title = "สรุปข้�
                             <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                                 ตำแหน่งทั้งหมด
                             </Typography>
-                            <Typography variant="h5" sx={{ fontWeight: 700, color: '#1565c0' }}>
+                            <Typography variant="h2" sx={{ fontWeight: 700, color: '#1565c0' }}>
                                 {stats.totalPositions.toLocaleString()}
                             </Typography>
                         </Paper>
@@ -206,7 +206,7 @@ export default function SortableUnitsTable({ rows, title = "สรุปข้�
                             <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                                 เลือกแล้ว
                             </Typography>
-                            <Typography variant="h5" sx={{ fontWeight: 700, color: '#2e7d32' }}>
+                            <Typography variant="h2" sx={{ fontWeight: 700, color: '#2e7d32' }}>
                                 {stats.totalRegistered.toLocaleString()}
                             </Typography>
                         </Paper>
@@ -223,7 +223,7 @@ export default function SortableUnitsTable({ rows, title = "สรุปข้�
                             <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                                 ว่าง
                             </Typography>
-                            <Typography variant="h5" sx={{ fontWeight: 700, color: '#e65100' }}>
+                            <Typography variant="h2" sx={{ fontWeight: 700, color: '#e65100' }}>
                                 {stats.totalVacant.toLocaleString()}
                             </Typography>
                         </Paper>
@@ -240,7 +240,7 @@ export default function SortableUnitsTable({ rows, title = "สรุปข้�
                             <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
                                 เฉลี่ยการเลือก
                             </Typography>
-                            <Typography variant="h5" sx={{ fontWeight: 700, color: '#6a1b9a' }}>
+                            <Typography variant="h2" sx={{ fontWeight: 700, color: '#6a1b9a' }}>
                                 {stats.avgPercent}%
                             </Typography>
                         </Paper>

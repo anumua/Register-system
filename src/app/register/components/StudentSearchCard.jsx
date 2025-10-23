@@ -21,7 +21,8 @@ import {
   Clear as ClearIcon,
   School as SchoolIcon,
   ArrowBack as ArrowBackIcon,
-  ArrowForward as ArrowForwardIcon
+  ArrowForward as ArrowForwardIcon,
+  Cancel as CancelIcon
 } from '@mui/icons-material';
 
 export default function StudentSearchCard({
@@ -33,10 +34,11 @@ export default function StudentSearchCard({
   searchLoading,
   onSearch,
   onSearchIndex,
-  onReset
+  onReset,
+  onCancelAssignment
 }) {
-  console.log(studentData);
-  console.log(process.env.NEXT_PUBLIC_PICTURE_NCO, '22');
+
+
   const paddedId = String(studentData?.studentId).padStart(3, '0');
 
   const handleKeyPress = (e) => {
@@ -196,22 +198,26 @@ export default function StudentSearchCard({
                   transition: 'all 0.3s ease',
                   '& fieldset': {
                     borderWidth: 2,
-                    borderColor: 'divider'
+                    borderColor: 'divider',
                   },
                   '&:hover fieldset': {
                     borderColor: 'primary.main',
                   },
-                  '&.Mui-focused': {
-                    '& fieldset': {
-                      borderWidth: 2.5,
-                      borderColor: 'primary.main',
-                    },
-                    boxShadow: '0 0 0 4px rgba(25, 118, 210, 0.1)'
-                  }
+                  '&.Mui-focused fieldset': {
+                    borderWidth: 2.5,
+                    borderColor: 'primary.main',
+                  },
+                  boxShadow: '0 0 0 4px rgba(25, 118, 210, 0.1)',
+                },
+                '& .MuiInputBase-input': {
+                  fontSize: '1.8rem', // ขนาดฟอนต์ของข้อความที่พิมพ์
+                  fontWeight: 500,
+                  py: 1.2, // เพิ่มระยะห่างแนวตั้งของ input
                 },
                 '& .MuiInputLabel-root': {
-                  fontWeight: 500
-                }
+                  fontSize: '1.0rem', // ขนาดฟอนต์ของ label
+                  
+                },
               }}
             />
 
@@ -288,24 +294,29 @@ export default function StudentSearchCard({
                   transition: 'all 0.3s ease',
                   '& fieldset': {
                     borderWidth: 2,
-                    borderColor: 'divider'
+                    borderColor: 'divider',
                   },
                   '&:hover fieldset': {
                     borderColor: 'primary.main',
                   },
-                  '&.Mui-focused': {
-                    '& fieldset': {
-                      borderWidth: 2.5,
-                      borderColor: 'primary.main',
-                    },
-                    boxShadow: '0 0 0 4px rgba(25, 118, 210, 0.1)'
-                  }
+                  '&.Mui-focused fieldset': {
+                    borderWidth: 2.5,
+                    borderColor: 'primary.main',
+                  },
+                  boxShadow: '0 0 0 4px rgba(25, 118, 210, 0.1)',
+                },
+                '& .MuiInputBase-input': {
+                  fontSize: '1.8rem', // ขนาดฟอนต์ของข้อความที่พิมพ์
+                  fontWeight: 500,
+                  py: 1.2, // เพิ่มระยะห่างแนวตั้งของ input
                 },
                 '& .MuiInputLabel-root': {
-                  fontWeight: 500
-                }
+                  fontSize: '1.0rem', // ขนาดฟอนต์ของ label
+
+                },
               }}
             />
+
 
 
             <Button
@@ -315,6 +326,7 @@ export default function StudentSearchCard({
               sx={{
                 minWidth: 56,
                 height: 56,
+
                 borderRadius: 3,
                 borderWidth: 2,
                 transition: 'all 0.3s ease',
@@ -416,6 +428,7 @@ export default function StudentSearchCard({
                         <Typography
                           variant="h5"
                           fontWeight="700"
+                          fontSize={30}
                           color="primary.dark"
                           sx={{ mb: 0.5 }}
                         >
@@ -423,11 +436,25 @@ export default function StudentSearchCard({
                         </Typography>
                         {studentData.nco_king && (
                           <Chip
-                            label={studentData.nco_king}
+                            label='ฉก.'
                             color="error"
                             variant="filled"
                             size="medium"
                             sx={{ fontSize: 20 }}
+                          />
+                        )}
+                        {studentData.assigned && (
+                          <Chip
+                            label="เลือกแล้ว"
+                            color="success"
+                            variant="filled"
+                            size="medium"
+                            sx={{
+                              fontSize: 16,
+                              fontWeight: 600,
+                              background: 'linear-gradient(135deg, #4caf50 0%, #81c784 100%)',
+                              boxShadow: '0 2px 8px rgba(76, 175, 80, 0.3)'
+                            }}
                           />
                         )}
                       </Grid>
@@ -445,6 +472,7 @@ export default function StudentSearchCard({
                             gap: 1
                           }}
                         >
+
                           <Box
                             component="span"
                             sx={{
@@ -454,41 +482,64 @@ export default function StudentSearchCard({
                               bgcolor: 'primary.main'
                             }}
                           />
-                          ลำดับเลือกหน่วย {studentData?.index}
-                          <Box
-                            component="span"
-                            sx={{
-                              width: 6,
-                              height: 6,
-                              borderRadius: '50%',
-                              bgcolor: 'primary.main'
-                            }}
-                          />
-                          เลขประจำตัว {studentData?.studentId}
+                          หมายเลขสอบ {studentData?.studentId}
                         </Typography>
                       </Grid>
                     </Grid>
                   </Box>
 
 
-                  {studentData.remark && (
-                    <Chip
-                      label={`${studentData.remark}`}
-                      color="primary"
-                      variant="filled"
-                      size="medium"
-                      sx={{
-                        fontWeight: 600,
-                        height: 36,
-                        borderRadius: 2,
-                        boxShadow: '0 2px 8px rgba(25, 118, 210, 0.2)',
-                        background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
-                        '& .MuiChip-label': {
-                          px: 2
-                        }
-                      }}
-                    />
-                  )}
+                  <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, mt: 1, alignItems: 'center', flexWrap: 'wrap' }}>
+                    {studentData.remark && (
+                      <Chip
+                        label={`${studentData.remark}`}
+                        color="primary"
+                        variant="filled"
+                        size="medium"
+                        sx={{
+                          fontSize: 23,
+                          fontWeight: 600,
+                          height: 36,
+                          borderRadius: 2,
+                          boxShadow: '0 2px 8px rgba(25, 118, 210, 0.2)',
+                          background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+                          '& .MuiChip-label': {
+                            px: 2
+                          }
+                        }}
+                      />
+                    )}
+                    
+                    {/* Cancel Assignment Button */}
+                    {studentData.assigned && onCancelAssignment && (
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                        startIcon={<CancelIcon />}
+                        onClick={onCancelAssignment}
+                        sx={{
+                          textTransform: 'none',
+                          fontWeight: 600,
+                          px: 2,
+                          py: 0.5,
+                          borderRadius: 2,
+                          borderWidth: 1.5,
+                          fontSize: '0.9rem',
+                          height: 32,
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            borderWidth: 1.5,
+                            backgroundColor: 'error.50',
+                            transform: 'translateY(-1px)',
+                            boxShadow: '0 4px 12px rgba(244, 67, 54, 0.2)'
+                          }
+                        }}
+                      >
+                        
+                      </Button>
+                    )}
+                  </Box>
                 </Grid>
               </Grid>
             </Paper>

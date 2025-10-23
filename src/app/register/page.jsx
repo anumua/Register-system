@@ -34,6 +34,7 @@ export default function RegisterPage() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -44,6 +45,23 @@ export default function RegisterPage() {
 
 
   console.log()
+  // ช่วยจัดรูปแบบ remark ให้สะอาดและแสดงเฉพาะข้อความที่มีความหมาย
+  const normalizeRemark = (raw) => {
+    if (raw == null) return '';
+    const compact = String(raw).replace(/\s+/g, ' ').trim();
+    if (!compact) return '';
+    const lower = compact.toLowerCase();
+    if (
+      lower === 'null' ||
+      lower === 'undefined' ||
+      lower === 'null null (null) (null)' ||
+      lower.includes('(null)') ||
+      /(^|\s)null(\s|$)/.test(lower)
+    ) {
+      return '';
+    }
+    return compact;
+  };
   // โหลดข้อมูลหน่วยทั้งหมดและแตกหน่วยย่อยออกมา
   useEffect(() => {
     loadMilitaryUnits();
@@ -160,10 +178,7 @@ export default function RegisterPage() {
           index: student.nco_index,
           nco_king: student.nco_king,
           fix_unit: student.fix_unit,
-          remark:
-            !student.remark || student.remark === "null  null   (null)  (null)"
-              ? ''
-              : student.remark
+          remark: normalizeRemark(student.remark)
         });
 
       } else {
@@ -206,6 +221,7 @@ export default function RegisterPage() {
           )
         );
         console.log(student, 'student');
+       
 
         setStudentData({
           id: student.id,
@@ -217,10 +233,7 @@ export default function RegisterPage() {
           index: student.nco_index,
           nco_king: student.nco_king,
           fix_unit: student.fix_unit,
-          remark:
-            !student.remark || student.remark === "null  null   (null)  (null)"
-              ? ''
-              : student.remark
+          remark: normalizeRemark(student.remark)
         });
 
       } else {
@@ -267,6 +280,7 @@ export default function RegisterPage() {
       positionName: pos.name,
       pos_index: pos.pos_index || null,
       pos_king: pos.king || null,
+      unit_name: subunit.name, // เพิ่ม unit_name
       
     }));
 
@@ -275,6 +289,7 @@ export default function RegisterPage() {
 
   // เพิ่มนักเรียนเข้าตำแหน่ง
   const addStudentToPosition = async (position) => {
+
     console.log(position, 'position');
     if (!studentData || !selectedSubunit) {
       setError('กรุณาค้นหานักเรียนและเลือกหน่วยก่อน');
@@ -305,19 +320,34 @@ export default function RegisterPage() {
       if (selectedSubunit) {
         const foundSub = refreshedSubunits.find(s => String(s.id) === String(selectedSubunit.id));
         if (foundSub) {
+          
           selectSubunit(foundSub); // จะอัปเดต unitData ให้ตรงกับ server
         }
       }
-
-      // อัปเดต studentData ให้แสดงว่ามีตำแหน่งแล้ว
-      setStudentData(prev => prev ? { ...prev, assigned: true } : prev);
-
+      
       setSuccess(
         `นนส. ${studentData.name} เลือกตำแหน่ง${position.positionName}  ${selectedSubunit?.name || ''}  สำเร็จแล้ว`
       );
+      
+      // อัปเดต studentData ให้ assigned เป็น true ทันที
+      setStudentData(prev => ({
+        ...prev,
+        assigned: true
+      }));
+      
+      // รีเซ็ต state และค้นหาใหม่ด้วยค่าเดิม
+     
+      setSelectedSubunit(null);
+    
+      
+      // // รอสักครู่แล้วค้นหาใหม่ด้วยค่าเดิม
+      // setTimeout(() => {
+      //   // จำลองการกด Enter ที่ช่องค้นหาลำดับเลือกหน่วย
+      //   searchIndex(studentIndex);
+      // }, 500);
+
       // setStudentId('');
       // setStudentData(null);
-      setSelectedSubunit(null);
       // หากต้องการล้างการเลือกนักเรียนหลังเพิ่ม ให้ uncomment บรรทัดถัดไป
       // setStudentData(null);
     } catch (err) {
@@ -377,6 +407,81 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+
+  // ยกเลิกการบันทึกนักเรียนออกจากหน่วย
+  const handleCancelAssignment = () => {
+    setCancelDialogOpen(true);
+  };
+
+  const cancelStudentAssignment = async () => {
+    if (!studentData) return;
+
+    try {
+      setLoading(true);
+      
+      // หาตำแหน่งที่นักเรียนถูกบันทึกไว้
+      const assignedPosition = militaryUnits.find(unit =>
+        unit.subunits.some(subunit =>
+          subunit.positions.some(pos => 
+            pos.occupieNumber && String(pos.occupieNumber) === String(studentData.studentId)
+          )
+        )
+      );
+
+      if (!assignedPosition) {
+        setError('ไม่พบตำแหน่งที่นักเรียนถูกบันทึกไว้');
+        return;
+      }
+
+      // หาตำแหน่งที่ถูกต้อง
+      let targetPosition = null;
+      for (const unit of militaryUnits) {
+        for (const subunit of unit.subunits) {
+          for (const pos of subunit.positions) {
+            if (pos.occupieNumber && String(pos.occupieNumber) === String(studentData.studentId)) {
+              targetPosition = pos;
+              break;
+            }
+          }
+          if (targetPosition) break;
+        }
+        if (targetPosition) break;
+      }
+
+      if (!targetPosition) {
+        setError('ไม่พบตำแหน่งที่นักเรียนถูกบันทึกไว้');
+        return;
+      }
+
+      // เรียก API เพื่อยกเลิกการบันทึก
+      const response = await fetch(`/api/positions/${targetPosition.posId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nco_id: null, action: 'unassign' })
+      });
+
+      if (!response.ok) throw new Error('ยกเลิกการบันทึกไม่สำเร็จ');
+
+      await response.json();
+
+      // รีเฟรชข้อมูลจากเซิร์ฟเวอร์
+      await loadMilitaryUnits();
+
+      // อัปเดต studentData ให้ assigned เป็น false
+      setStudentData(prev => ({
+        ...prev,
+        assigned: false
+      }));
+
+      setSuccess('ยกเลิกการบันทึกสำเร็จ');
+    } catch (err) {
+      console.error(err);
+      setError('เกิดข้อผิดพลาดในการยกเลิกการบันทึก');
+    } finally {
+      setCancelDialogOpen(false); 
+      setLoading(false);
+    }
+  };
   console.log(studentIndex, 'studentIndex');
 
   return (
@@ -388,7 +493,7 @@ export default function RegisterPage() {
         sx={{ mb: 2 }}
         size={isMobile ? 'small' : 'medium'}
       >
-        กลับหน้าหลัก
+        กลับหน้าหลัก 
       </Button>
 
      
@@ -414,6 +519,7 @@ export default function RegisterPage() {
               setError('');
               setSuccess('');
             }}
+            onCancelAssignment={handleCancelAssignment}
           />
   
       </Grid>
@@ -434,6 +540,7 @@ export default function RegisterPage() {
               onDeleteClick={handleDeleteClick}
               onPositionClick={addStudentToPosition}
               studentData={studentData}
+              militaryUnits={militaryUnits}
             />
           }
          </Grid>
@@ -444,6 +551,19 @@ export default function RegisterPage() {
         studentToDelete={studentToDelete}
         loading={loading}
         onConfirmDelete={removeStudentFromUnit}
+      />
+
+      {/* Cancel Assignment Confirmation */}
+      <DeleteConfirmDialog
+        open={cancelDialogOpen}
+        onClose={() => setCancelDialogOpen(false)}
+        studentToDelete={studentData}
+        loading={loading}
+        onConfirmDelete={cancelStudentAssignment}
+        title="ยืนยันการยกเลิกการบันทึก"
+        message={`คุณต้องการยกเลิกการบันทึก นนส. ${studentData?.name || 'นักเรียน'} ออกจากหน่วยหรือไม่?`}
+        confirmText="ยกเลิกการบันทึก"
+        cancelText="ไม่ยกเลิก"
       />
     </Container>
   );

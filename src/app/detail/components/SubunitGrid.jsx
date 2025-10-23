@@ -171,7 +171,7 @@ export default function SubunitGrid({ allSubunits, onClick, isMobile }) {
                     >
                       
                        {su.subunitName} {su.posking &&  <Chip
-                            label='ทม.'
+                            label='ฉก.'
                             color="error"
                             variant="filled"
                             size="small"

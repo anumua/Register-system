@@ -14,8 +14,7 @@ export const dynamic = "force-dynamic";
 
 export default function Page() {
     const router = useRouter();
-    const [teamPositions, setTeamPositions] = useState([]);
-    const [nonTeamPositions, setNonTeamPositions] = useState([]);
+    const [allPositions, setAllPositions] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
@@ -34,8 +33,7 @@ export default function Page() {
 
                 if (!isMounted) return;
                 
-                setTeamPositions(Array.isArray(data?.teamPositions) ? data.teamPositions : []);
-                setNonTeamPositions(Array.isArray(data?.nonTeamPositions) ? data.nonTeamPositions : []);
+                setAllPositions(Array.isArray(data?.allPositions) ? data.allPositions : []);
                 setErrorMessage("");
             } catch (err) {
                 if (!isMounted) return;
@@ -85,15 +83,8 @@ export default function Page() {
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <PositionsTable 
-                        positions={nonTeamPositions} 
-                        title="หน่วยทั่วไป" 
-                    />
-                </Grid>
-                
-                <Grid item xs={12}>
-                    <PositionsTable 
-                        positions={teamPositions} 
-                        title="หน่วยรักษาพระองค์ (ทม.)" 
+                        positions={allPositions} 
+                        title="ตำแหน่งทั้งหมด" 
                     />
                 </Grid>
             </Grid>
@@ -101,7 +92,7 @@ export default function Page() {
             <Box sx={{ mt: 3, p: 2, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
                 <Typography variant="body2" color="text.secondary">
                     <strong>หมายเหตุ:</strong> ตารางแสดงข้อมูลตำแหน่งทั้งหมดในระบบ 
-                    โดยแยกเป็นหน่วยทั่วไปและหน่วยรักษาพระองค์ (ทม.) 
+                    รวมทั้งหน่วยทั่วไปและหน่วยรักษาพระองค์ (ทม.) 
                     หากตำแหน่งใดมีการเลือกแล้วจะแสดงชื่อนักเรียนนายสิบที่เลือก 
                     หากยังไม่มีการเลือกจะแสดง "ว่าง"
                 </Typography>

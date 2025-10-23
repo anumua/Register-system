@@ -20,7 +20,11 @@ export default function DeleteConfirmDialog({
   onClose, 
   studentToDelete, 
   loading, 
-  onConfirmDelete 
+  onConfirmDelete,
+  title = "ยืนยันการลบ",
+  message = "คุณต้องการลบนักเรียนคนนี้ออกจากหน่วยหรือไม่?",
+  confirmText = "ลบ",
+  cancelText = "ยกเลิก"
 }) {
   return (
     <Dialog
@@ -34,12 +38,12 @@ export default function DeleteConfirmDialog({
     >
       <DialogTitle sx={{ textAlign: 'center', fontWeight: 600, pb: 1 }}>
         <WarningIcon sx={{ fontSize: 28, color: 'warning.main', mb: 1, display: 'block', mx: 'auto' }} />
-        ยืนยันการลบ
+        {title}
       </DialogTitle>
       
       <DialogContent sx={{ textAlign: 'center', py: 3 }}>
         <Typography variant="body1" sx={{ mb: 2 }}>
-          คุณต้องการลบนักเรียนคนนี้ออกจากหน่วยหรือไม่?
+          {message}
         </Typography>
         {studentToDelete && (
           <Paper sx={{ p: 2, bgcolor: 'grey.50', border: '1px solid', borderColor: 'grey.200' }}>
@@ -64,7 +68,7 @@ export default function DeleteConfirmDialog({
           sx={{ minWidth: 100 }}
           disabled={loading}
         >
-          ยกเลิก
+          {cancelText}
         </Button>
         <Button
           onClick={onConfirmDelete}
@@ -74,7 +78,7 @@ export default function DeleteConfirmDialog({
           disabled={loading}
           startIcon={loading ? <CircularProgress size={16} /> : <DeleteIcon />}
         >
-          {loading ? 'กำลังลบ...' : 'ลบ'}
+          {loading ? 'กำลังดำเนินการ...' : confirmText}
         </Button>
       </DialogActions>
     </Dialog>

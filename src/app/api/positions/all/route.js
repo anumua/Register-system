@@ -32,9 +32,8 @@ export async function GET() {
         p.pos_pronum ASC
     `;
 
-    // แยกข้อมูลเป็น 2 กลุ่ม: ทม. และ ไม่ใช่ทม.
-    const teamPositions = [];
-    const nonTeamPositions = [];
+    // รวมข้อมูลทั้งหมดเป็นกลุ่มเดียว
+    const allPositions = [];
 
     rows.forEach(row => {
       const positionData = {
@@ -55,16 +54,11 @@ export async function GET() {
         is_selected: !!row.nco_id
       };
 
-      if (row.pos_king === 'ทม.') {
-        teamPositions.push(positionData);
-      } else {
-        nonTeamPositions.push(positionData);
-      }
+      allPositions.push(positionData);
     });
 
     return new Response(JSON.stringify({ 
-      teamPositions,
-      nonTeamPositions 
+      allPositions
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },

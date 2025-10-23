@@ -131,10 +131,11 @@ export default function UnitDialog({ open, onClose, selectedUnit, isMobile, isSm
                 sx={{ 
                   color: 'rgba(255,255,255,0.9)',
                   fontWeight: 500,
+                  fontSize:30,
                   mb: 1
                 }}
               >
-                {selectedUnit.subunit_name} ({selectedUnit.unit_name})
+                {selectedUnit.subunit_name}
               </Typography>
               
               {/* Statistics Chips */}
@@ -326,7 +327,7 @@ export default function UnitDialog({ open, onClose, selectedUnit, isMobile, isSm
                         sx={{ 
                           py: isMobile ? 2 : 2.5,
                           fontWeight: 500,
-                          fontSize: '0.95rem',
+                          fontSize: '1.4rem',
                           color: 'text.primary'
                         }}
                       >
@@ -385,7 +386,7 @@ export default function UnitDialog({ open, onClose, selectedUnit, isMobile, isSm
                                 fontWeight="600"
                                 sx={{ 
                                   color: 'text.primary',
-                                  fontSize: isMobile ? '0.85rem' : '0.95rem'
+                                  fontSize: isMobile ? '0.85rem' : '1.4rem'
                                 }}
                               >
                                 นนส. {row.student_name}

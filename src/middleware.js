@@ -8,10 +8,17 @@ export function middleware(request) {
   const isPublicPage =
     pathname === "/login" ||
     pathname === "/detail" ||
-    pathname.startsWith("/detail/");
+    pathname === "/positions" ||
+    pathname === "/report" ||
+    pathname.startsWith("/detail/") ||
+    pathname.startsWith("/positions/") ||
+    pathname.startsWith("/report/");
+
 
   const isPublicApi =
-    pathname === "/api/detail" || pathname.startsWith("/api/detail/");
+    pathname === "/api/detail" || pathname.startsWith("/api/detail/") ||
+    pathname === "/api" || pathname.startsWith("/api/")
+
 
   // ✅ static asset / public folder
   const isStaticAsset =

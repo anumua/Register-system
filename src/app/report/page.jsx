@@ -86,7 +86,7 @@
 					<SortableUnitsTable rows={unitsNoKing} />
 				</Grid>
 				<Grid marginTop={10}>
-					<Typography sx={{ fontSize: 40, fontWeight: 600, marginBottom: 5, color: 'red' }}>หน่วยรักษาพระองค์</Typography>
+					<Typography sx={{ fontSize: 40, fontWeight: 600, marginBottom: 5, color: 'red' }}>หน่วย ฉก.ทม.รอ.904</Typography>
 					<SortableUnitsTable rows={unitsKing} />
 				</Grid>
 			</Container>
