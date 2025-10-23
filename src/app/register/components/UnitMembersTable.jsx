@@ -314,7 +314,7 @@ export default function UnitMembersTable({
                           <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '1.3rem', color: 'text.primary' }}>
                             {pos.positionName}
                           </Typography>
-                          <Typography variant="body2" sx={{ fontSize: '0.9rem',color:"text.disabled" }}>{pos.positionCode}</Typography>
+                          <Typography variant="body2" sx={{ fontSize: '1.1rem',color:"#3e78ff" }}>{pos.positionCode}</Typography>
                         </TableCell>
 
                         <TableCell sx={{ py: 3 }}>
