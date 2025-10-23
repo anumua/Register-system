@@ -46,6 +46,7 @@ export async function GET() {
         occupieNumber: row.nco_number || null,
         timeSelected: row.time_select || null,
         status: row.nco_id ? "occupied" : "vacant",
+        pos_code: row.pos_code || null,
       });
     }
 

@@ -263,10 +263,11 @@ export default function RegisterPage() {
         ? new Date(pos.timeSelected).toLocaleDateString('th-TH')
         : '',
       subunitName: subunit.name,
-      positionCode: pos.code,
+      positionCode: pos.pos_code,
       positionName: pos.name,
       pos_index: pos.pos_index || null,
-      pos_king: pos.king || null
+      pos_king: pos.king || null,
+      
     }));
 
     setUnitData(members);
