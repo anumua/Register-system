@@ -44,7 +44,7 @@ export default function PositionsTable({ positions, title }) {
 
     const filteredPositions = useMemo(() => {
         if (!searchTerm.trim()) return positions;
-        
+
         const search = searchTerm.toLowerCase().trim();
         return positions.filter(pos => {
             return (
@@ -83,13 +83,13 @@ export default function PositionsTable({ positions, title }) {
 
     const headCells = [
         { id: "pos_index", label: "ลำดับ", numeric: true, sortable: true, width: "70px" },
-        { id: "unit_army", label: "กองทัพ", numeric: false, sortable: true, width: "120px" },
-        { id: "unit_division", label: "กองพล", numeric: false, sortable: true, width: "140px" },
-        { id: "unit_name", label: "หน่วย", numeric: false, sortable: true, width: "180px" },
-        { id: "unit_prov", label: "จังหวัด", numeric: false, sortable: true, width: "120px" },
-        { id: "pos_name", label: "ชื่อตำแหน่ง", numeric: false, sortable: true, minWidth: "200px" },
-        { id: "pos_code", label: "เลขที่ตำแหน่ง", numeric: false, sortable: true, width: "140px" },
-        { id: "student_name", label: "ผู้เลือก", numeric: false, sortable: true, minWidth: "200px" }
+        { id: "unit_army", label: "กองทัพ", numeric: false, sortable: true, width: "70px" },
+        { id: "unit_division", label: "กองพล", numeric: false, sortable: true, width: "70px" },
+        { id: "unit_name", label: "หน่วย", numeric: false, sortable: true, width: "110px" },
+        { id: "unit_prov", label: "จังหวัด", numeric: false, sortable: true, width: "100px" },
+        { id: "pos_name", label: "ชื่อตำแหน่ง", numeric: false, sortable: true, minWidth: "100px" },
+        { id: "pos_code", label: "เลขที่ตำแหน่ง", numeric: false, sortable: true, width: "60px" },
+        { id: "student_name", label: "ผู้เลือก", numeric: false, sortable: true, minWidth: "270px" }
     ];
 
     const isHighlight = title.includes('ทม');
@@ -97,11 +97,11 @@ export default function PositionsTable({ positions, title }) {
     return (
         <Box sx={{ mb: 5 }}>
             {/* Header Section */}
-            <Paper 
-                elevation={0} 
-                sx={{ 
+            <Paper
+                elevation={0}
+                sx={{
                     p: 3,
-                    mb: 2, 
+                    mb: 2,
                     backgroundColor: isHighlight ? '#fff5f5' : '#f8f9fa',
                     border: '1px solid',
                     borderColor: isHighlight ? '#ffcdd2' : '#e0e0e0',
@@ -110,45 +110,45 @@ export default function PositionsTable({ positions, title }) {
             >
                 <Stack spacing={2}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-                        <Typography 
-                            variant="h5" 
-                            sx={{ 
-                                fontWeight: 600, 
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                fontWeight: 600,
                                 color: isHighlight ? '#d32f2f' : '#1a237e',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 1
                             }}
                         >
-                            {isHighlight && <Box component="span" sx={{ 
-                                width: 8, 
-                                height: 8, 
-                                borderRadius: '50%', 
+                            {isHighlight && <Box component="span" sx={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: '50%',
                                 backgroundColor: '#d32f2f',
                                 animation: 'pulse 2s infinite'
                             }} />}
                             {title}
                         </Typography>
-                        
+
                         <Stack direction="row" spacing={2}>
-                            <Chip 
+                            <Chip
                                 label={`ทั้งหมด ${stats.total} ตำแหน่ง`}
-                                sx={{ 
+                                sx={{
                                     fontWeight: 600,
                                     backgroundColor: '#e3f2fd',
                                     color: '#1565c0'
                                 }}
                             />
-                            <Chip 
+                            <Chip
                                 icon={<CheckCircle size={16} />}
                                 label={`เลือกแล้ว ${stats.selected}`}
                                 color="success"
                                 sx={{ fontWeight: 600 }}
                             />
-                            <Chip 
+                            <Chip
                                 icon={<Circle size={16} />}
                                 label={`ว่าง ${stats.available}`}
-                                sx={{ 
+                                sx={{
                                     fontWeight: 600,
                                     backgroundColor: '#fff3e0',
                                     color: '#e65100'
@@ -156,9 +156,9 @@ export default function PositionsTable({ positions, title }) {
                             />
                         </Stack>
                     </Box>
-                    
+
                     <Divider />
-                    
+
                     <TextField
                         fullWidth
                         size="small"
@@ -178,7 +178,7 @@ export default function PositionsTable({ positions, title }) {
                             }
                         }}
                     />
-                    
+
                     {searchTerm && (
                         <Typography variant="body2" color="text.secondary">
                             พบ {sortedPositions.length} รายการจากการค้นหา "{searchTerm}"
@@ -188,23 +188,28 @@ export default function PositionsTable({ positions, title }) {
             </Paper>
 
             {/* Table Section */}
-            <TableContainer 
-                component={Paper} 
+            <TableContainer
+                component={Paper}
                 variant="outlined"
-                sx={{ 
+                sx={{
                     borderRadius: 2,
                     boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
                 }}
             >
-                <Table size="small" sx={{ minWidth: 1200 }}>
+                <Table
+                    size="small"
+                    sx={{
+                        width: '100%',
+                        tableLayout: 'auto'
+                    }}>
                     <TableHead>
                         <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
                             {headCells.map((hc) => (
-                                <TableCell 
-                                    key={hc.id} 
+                                <TableCell
+                                    key={hc.id}
                                     align={hc.numeric ? "center" : "left"}
                                     sortDirection={orderBy === hc.id ? order : false}
-                                    sx={{ 
+                                    sx={{
                                         fontWeight: 700,
                                         fontSize: '0.875rem',
                                         color: '#424242',
@@ -241,10 +246,10 @@ export default function PositionsTable({ positions, title }) {
                             </TableRow>
                         ) : (
                             sortedPositions.map((pos, idx) => (
-                                <TableRow 
-                                    key={pos.pos_id} 
+                                <TableRow
+                                    key={pos.pos_id}
                                     hover
-                                    sx={{ 
+                                    sx={{
                                         backgroundColor: pos.is_selected ? '#e8f5e9' : 'inherit',
                                         '&:hover': {
                                             backgroundColor: pos.is_selected ? '#c8e6c9' : '#f5f5f5'
@@ -266,13 +271,13 @@ export default function PositionsTable({ positions, title }) {
                                             <Typography variant="body2" sx={{ fontWeight: 500 }}>
                                                 {pos.pos_name || '-'}
                                             </Typography>
-                                        
+
                                         </Box>
                                     </TableCell>
                                     <TableCell>
-                                        <Typography 
-                                            variant="body2" 
-                                            sx={{ 
+                                        <Typography
+                                            variant="body2"
+                                            sx={{
                                                 fontFamily: 'monospace',
                                                 fontSize: '0.813rem',
                                                 color: '#666'
@@ -284,9 +289,9 @@ export default function PositionsTable({ positions, title }) {
                                     <TableCell>
                                         {pos.is_selected ? (
                                             <Box>
-                                                <Typography 
-                                                    variant="body2" 
-                                                    sx={{ 
+                                                <Typography
+                                                    variant="body2"
+                                                    sx={{
                                                         fontWeight: 600,
                                                         color: '#05339C',
                                                         mb: 0.5
@@ -296,11 +301,11 @@ export default function PositionsTable({ positions, title }) {
                                                 </Typography>
                                             </Box>
                                         ) : (
-                                            <Chip 
-                                                label="ว่าง" 
+                                            <Chip
+                                                label="ว่าง"
                                                 size="small"
                                                 variant="outlined"
-                                                sx={{ 
+                                                sx={{
                                                     borderColor: '#ff9800',
                                                     color: '#e65100',
                                                     fontWeight: 600,
