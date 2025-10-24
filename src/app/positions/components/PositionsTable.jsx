@@ -55,7 +55,10 @@ export default function PositionsTable({ positions, title }) {
                 pos.pos_name?.toLowerCase().includes(search) ||
                 pos.pos_code?.toLowerCase().includes(search) ||
                 pos.student_name?.toLowerCase().includes(search) ||
-                pos.nco_rank?.toLowerCase().includes(search)
+                pos.nco_rank?.toLowerCase().includes(search) ||
+                pos.nco_index?.toString().toLowerCase().includes(search)
+                
+                
             );
         });
     }, [positions, searchTerm]);
@@ -89,7 +92,8 @@ export default function PositionsTable({ positions, title }) {
         { id: "unit_prov", label: "จังหวัด", numeric: false, sortable: true, width: "100px" },
         { id: "pos_name", label: "ชื่อตำแหน่ง", numeric: false, sortable: true, minWidth: "100px" },
         { id: "pos_code", label: "เลขที่ตำแหน่ง", numeric: false, sortable: true, width: "60px" },
-        { id: "student_name", label: "ผู้เลือก", numeric: false, sortable: true, minWidth: "270px" }
+        { id: "student_name", label: "ผู้เลือก", numeric: false, sortable: true, minWidth: "270px" },
+        { id: "nco_index", label: "ลำดับเลือก", numeric: true, sortable: true, minWidth: "150px" }
     ];
 
     const isHighlight = title.includes('ทม');
@@ -313,6 +317,18 @@ export default function PositionsTable({ positions, title }) {
                                                 }}
                                             />
                                         )}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography
+                                            variant="body2"
+                                            sx={{
+                                                fontFamily: 'monospace',
+                                                fontSize: '0.813rem',
+                                                color: '#666'
+                                            }}
+                                        >
+                                            {pos.nco_index || '-'}
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
                             ))

@@ -13,7 +13,8 @@ export function middleware(request) {
     pathname === "/main" ||
     pathname.startsWith("/detail/") ||
     pathname.startsWith("/positions/") ||
-    pathname.startsWith("/report/");
+    pathname.startsWith("/report/")  ||
+    pathname.startsWith("/main/");
 
 
   const isPublicApi =

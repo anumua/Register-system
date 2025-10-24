@@ -21,7 +21,8 @@ export async function GET() {
         p.time_select,
         CONCAT(s.first_name, ' ', s.last_name) as student_name,
         s.nco_number,
-        s.nco_rank
+        s.nco_rank,
+        s.nco_index
       FROM positions p
       LEFT JOIN students s ON p.nco_id = s.nco_id
       ORDER BY 
@@ -51,7 +52,8 @@ export async function GET() {
         nco_number: row.nco_number || '',
         nco_rank: row.nco_rank || '',
         time_select: row.time_select,
-        is_selected: !!row.nco_id
+        is_selected: !!row.nco_id,
+        nco_index: row.nco_index || ''
       };
 
       allPositions.push(positionData);

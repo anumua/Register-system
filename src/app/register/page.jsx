@@ -118,8 +118,10 @@ export default function RegisterPage() {
       return;
     }
     
+    
     // ค้นหาหน่วยย่อยที่ตรงกับ fix_unit
     const matchingSubunit = subunits.find(subunit => {
+      
       const nameMatch = subunit.name === fixUnitName;
       const parentMatch = subunit.parentUnit === fixUnitName;
       const nameIncludes = subunit.name.includes(fixUnitName);
@@ -128,7 +130,7 @@ export default function RegisterPage() {
       console.log(`Checking subunit: ${subunit.name} (parent: ${subunit.parentUnit})`);
       console.log(`  nameMatch: ${nameMatch}, parentMatch: ${parentMatch}, nameIncludes: ${nameIncludes}, fixUnitIncludes: ${fixUnitIncludes}`);
       
-      return nameMatch || parentMatch || nameIncludes || fixUnitIncludes;
+      return nameMatch;
     });
     
     console.log('Found matching subunit:', matchingSubunit);
@@ -261,6 +263,8 @@ export default function RegisterPage() {
       setUnitData([]);
       return;
     }
+
+    console.log(subunit, '2222');
 
     // แสดงตำแหน่งทั้งหมดของหน่วยย่อย (occupied หรือ ว่าง)
     console.log(subunit, 'chosen subunit');
